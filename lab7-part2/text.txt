@@ -1,0 +1,2 @@
+London,is        the,capital of GB
+new line         is clean
