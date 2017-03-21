@@ -166,15 +166,9 @@ public:
 
 	void swap(TVector& other) throw() //
 	{
-		value_type * ptr = Ptr;
-		Ptr = other.Ptr;
-		other.Ptr = ptr;
-		int count = Count;
-		Count = other.Count;
-		other.Count = count;
-		count = InternalCapacity;
-		InternalCapacity = other.InternalCapacity;
-		other.InternalCapacity = count;
+		TVector tmp = other;
+		other = *this;
+		*this = tmp;
 	}
 
 	void resize(size_type count, value_type value = value_type()) //
