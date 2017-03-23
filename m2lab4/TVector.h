@@ -1,7 +1,6 @@
 #ifndef __TVECTOR_INCLUDED__
 #define __TVECTOR_INCLUDED__
-#include<iostream>
-#include<exception>
+#include<string>
 class TVector
 {
 public:
@@ -13,21 +12,21 @@ public:
 
 private:
 	value_type * Ptr;
-	size_type Count; // kol-vo elem v mass
-	size_type InternalCapacity; // skolko znach mozhno pomestit
+	size_type Count;
+	size_type InternalCapacity;
 public:
 	TVector()
-		: Count(0)
-		, InternalCapacity(0) // razmer
-	{
-		Ptr = new value_type;
-	}
+		: Ptr(nullptr)
+		, Count(0)
+		, InternalCapacity(0)
+	{ }
 
 	TVector(size_type capacity)
-		: Ptr(0),
-		Count(0)
+		: Count(0)
 		, InternalCapacity(capacity)
-	{}
+	{
+		Ptr = new value_type[InternalCapacity];
+	}
 
 	~TVector()
 	{
@@ -59,141 +58,145 @@ public:
 		return Ptr + Count;
 	}
 
-	void reserve(size_type size) // ustanovlenie capacity
+	void reserve(size_type size)
 	{
 		if (size < InternalCapacity) return;
-		value_type * ptr = new value_type[size];
+		value_type* ptr = new value_type[size];
 		memcpy(ptr, Ptr, Count * sizeof(size_type));
 		delete[] Ptr;
 		Ptr = ptr;
 		InternalCapacity = size;
-		
 	}
 
 	TVector(const TVector& rhs)
 	{
+		this->reserve(rhs.InternalCapacity);
+		memcpy(Ptr, rhs.Ptr, rhs.Count * sizeof(size_type));
 		Count = rhs.Count;
-		InternalCapacity = rhs.InternalCapacity;
-		Ptr = new value_type[InternalCapacity];
-		memcpy(Ptr, rhs.Ptr, Count * sizeof(value_type));
 	}
 
 	TVector& operator=(const TVector& rhs)
 	{
+		if (this == &rhs) return *this;
+		this->reserve(rhs.InternalCapacity);
 		Count = rhs.Count;
-		InternalCapacity = rhs.InternalCapacity;
-		Ptr = new value_type[InternalCapacity];
-		memcpy(Ptr, rhs.Ptr, Count * sizeof(value_type));
+		memcpy(Ptr, rhs.Ptr, Count * sizeof(size_type));
 		return *this;
 	}
 
-	void push_back(const value_type& value) // pomestit v konetz
+	void push_back(const value_type& value)
 	{
-		if (InternalCapacity == 0)
-		{
-			reserve(InternalCapacity + 1);
-		}
-		if (InternalCapacity - Count == 0)
-		{
-			reserve(InternalCapacity * 2);
-		}
+		if (InternalCapacity == Count)
+			this->reserve(InternalCapacity + 1);
 		Ptr[Count] = value;
-		Count = Count + 1;
-
+		Count++;
+		
 	}
 
 	reference at(size_type index)
 	{
 		if (index < 0 || index >= Count)
-			throw std::runtime_error("Error: there is not such number\n");
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[index];
-
 	}
 
 	value_type at(size_type index) const
 	{
 		if (index < 0 || index >= Count)
-			throw std::runtime_error("Error: there is not such number\n");
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[index];
 	}
 
 	reference operator[](size_type index)
 	{
 		if (index < 0 || index >= Count)
-			throw std::runtime_error("Error: there is not such number\n");
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[index];
 	}
 
 	const_reference operator[](size_type index) const
 	{
 		if (index < 0 || index >= Count)
-			throw std::runtime_error("Error: there is not such number\n");
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[index];
 	}
 
 	reference front()
 	{
+		if (Count == 0)
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[0];
 	}
 
 	const_reference front() const
 	{
+		if (Count == 0)
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[0];
 	}
 
 	reference back()
 	{
+		if (Count == 0)
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[Count - 1];
 	}
 
 	const_reference back() const
 	{
+		if (Count == 0)
+			throw std::exception("Error: there is not such number\n");
 		return Ptr[Count - 1];
 	}
 
 	void clear()
 	{
-		delete[] Ptr;
-		InternalCapacity = 0;
-		Count = 0;
+		if (Ptr != nullptr)
+		{
+			delete[] Ptr;
+			Count = 0;
+			InternalCapacity = 0;
+		}
 	}
 
-	void pop_back() // ubrat s kontza
+	void pop_back()
 	{
-		Ptr[Count] = 0;
+		if (Count == 0)
+			throw std::exception("Error: This vector is empty!\n");
+		value_type* ptr = new value_type[Count - 1];
+		memcpy(ptr, Ptr, (Count - 1) * sizeof(size_type));
+		delete Ptr;
+		Ptr = ptr;
 		Count = Count - 1;
 	}
 
-	void swap(TVector& other) throw() //
+	void swap(TVector& other) throw()
 	{
-		TVector tmp = other;
+		TVector ptr = other;
 		other = *this;
-		*this = tmp;
+		*this = ptr;
 	}
 
-	void resize(size_type count, value_type value = value_type()) //
+	void resize(size_type count, value_type value = value_type())
 	{
-		
-		if (Count < count)
+		if (count < Count)
+		{
+			size_type co = Count - count;
+			for (int i = 0; i < co; ++i)
+			{
+				this->pop_back();
+			}
+			Count = count;
+		}
+		if (count > Count)
 		{
 			this->reserve(count);
-
-			for (int i = Count; i < count; i++)
+			for (int i = Count; i < count; ++i)
 			{
-				Ptr[i] = value;
+				this->push_back(value);
 			}
-
-
+			Count = count;
 		}
-		if (Count > count)
-		{
-			for (int i = count; i < Count; i++)
-			{
-				Ptr[i] = 0;
-			}
-
-		}
-		Count = count;
 	}
 
 	iterator insert(iterator pos, const value_type& value)
@@ -268,7 +271,6 @@ public:
 		delete[] Ptr;
 		Ptr = tm;
 		Count += count;
-
 	}
 
 	iterator erase(iterator pos)
@@ -296,9 +298,8 @@ public:
 		delete[] Ptr;
 		Ptr = tm;
 		Count -= 1;
-		InternalCapacity = Count - 1; 
+		InternalCapacity = Count - 1;
 		return &(Ptr[tmp]);
-
 	}
 
 	iterator erase(iterator first, iterator last)
