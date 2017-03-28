@@ -5,9 +5,9 @@
 template<class IT>
 void sorting(IT beg, IT end)
 {
-	for (IT i = beg; i < end; ++i)
+	for (IT i = beg; i != end; ++i)
 	{
-		for (IT j = beg; j < end; ++j)
+		for (IT j = beg; j != end; ++j)
 		{
 			if ((*i) < (*j))
 			{
