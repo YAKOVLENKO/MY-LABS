@@ -1,66 +1,89 @@
 #include<iostream>
+#include<string>
+#include<array>
 template < size_t N >
-class bitset
+class TBitset
 {
 private:
-	bool mainmass[N];
+	std::array<bool, N> mainmass;
 public:
-	
+
 	// constructors
 
-	bitset() = default;
-	
-	bitset(bool* mass);
-	
-	~bitset() = default;
-	
-	bitset(unsigned long val);
-	
+	TBitset() = default;
+
+	TBitset(unsigned long val)
+	{
+		
+		for (int i = N - 1; i >= 0; --i)
+		{
+			mainmass[i] = val % 2;
+			val = val / 2;
+		}
+	}
+
+	TBitset(const std::string& str, size_t pos, size_t n)
+	{
+		size_t j = 0;
+		if (pos >= str.size())
+			throw std::out_of_range("Error!");
+		for (int i = pos; i < n; ++i)
+		{
+			if (j >= N)
+				return;
+			if (str[i] == '0')
+				mainmass[j] = 0;
+			else if (str[i] == '1')
+				mainmass[j] = 1;
+			else
+			{
+				~TBitset();
+				throw std::exception("Error!");
+			}
+		}
+	}
+
+	~TBitset() = default;
+
 	// bit operations
 
-	bitset& set() // çàïîëíÿåò âñå 1
+	TBitset& set() // Ã§Ã Ã¯Ã®Ã«Ã­Ã¿Ã¥Ã² Ã¢Ã±Ã¥ 1
 	{
 		memset(mainmass, 1, sizeof(mainmass));
-	}; 
-	
-	bitset& set(size_t index, bool value) //çàïîëíÿåò êîíêðåòíîå çíà÷åíèå value; 
+	};
+
+	TBitset& set(size_t index, bool value) //Ã§Ã Ã¯Ã®Ã«Ã­Ã¿Ã¥Ã² ÃªÃ®Ã­ÃªÃ°Ã¥Ã²Ã­Ã®Ã¥ Ã§Ã­Ã Ã·Ã¥Ã­Ã¨Ã¥ value; 
 	{
-		if (index >= N)
+		if (index >= N || index < 0)
 			throw() std::exception("Error");
 		if (value != 0 || value != 1)
 			throw() std::exception("Error");
 		mainmass[index] = value;
 	}
-	
-	bitset& reset() 
+
+	TBitset& reset()
 	{
 		memset(mainmass, 0, sizeof(mainmass));
 	}
-	
-	bitset& reset(size_t index)
+
+	TBitset& reset(size_t index)
 	{
 		mainmass[index] = 0;
 	}
-	
-	bitset& flip()// íåãàòèâ
+
+	TBitset& flip()// Ã­Ã¥Ã£Ã Ã²Ã¨Ã¢
 	{
 		for (int i = 0; i < N; i++)
 		{
-			if (mainmass[i] == 1)
-				mainmass[i] = 0;
-			else
-				mainmass[i] = 1;
+			mainmass[i] ^= 1;
 		}
 	}
-	
-	bitset& flip(size_t index)
+
+	TBitset& flip(size_t index)
 	{
-		if (index >= N)
+		if (index >= N || index < 0)
 			throw() std::exception("Error");
-		if (mainmass[index] == 1)
-			mainmass[index] = 0;
-		else
-			mainmass[index] = 1;
+		mainmass[index] ^= 1;
 	}
 
 	// bit access
@@ -69,31 +92,30 @@ public:
 	{
 		return mainmass[index];
 	}
-	
-	size_t count() const // ñ÷èòàåò 1
+
+	size_t count() const // Ã±Ã·Ã¨Ã²Ã Ã¥Ã² 1
 	{
 		size_t count = 0;
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 1)
-				count++;
+			count += mainmass[i];
 		}
 		return count;
 	}
-	
+
 	size_t size() const
 	{
 		return N;
 	}
 
-	bool test(size_t index) const // òî æå ñàìîå, ÷òî è [], êèäàåò std::out_of_range (â îòëè÷èå îò []), åñëè áîëüøå èëè = size
+	bool test(size_t index) const // Ã²Ã® Ã¦Ã¥ Ã±Ã Ã¬Ã®Ã¥, Ã·Ã²Ã® Ã¨ [], ÃªÃ¨Ã¤Ã Ã¥Ã² std::out_of_range (Ã¢ Ã®Ã²Ã«Ã¨Ã·Ã¨Ã¥ Ã®Ã² []), Ã¥Ã±Ã«Ã¨ Ã¡Ã®Ã«Ã¼Ã¸Ã¥ Ã¨Ã«Ã¨ = size
 	{
 		if (index >= N || index < 0)
 			throw() std::out_of_range("Error");
 		return mainmass[index];
 	}
-	
-	bool any() const // åñëè åñòü 1 â êëàññå - true, â èíîì ñëó÷àå - false;
+
+	bool any() const // Ã¥Ã±Ã«Ã¨ Ã¥Ã±Ã²Ã¼ 1 Ã¢ ÃªÃ«Ã Ã±Ã±Ã¥ - true, Ã¢ Ã¨Ã­Ã®Ã¬ Ã±Ã«Ã³Ã·Ã Ã¥ - false;
 	{
 		for (int i = 0; i < N; ++i)
 		{
@@ -103,17 +125,12 @@ public:
 		return false;
 	}
 
-	bool none() const // íå any
+	bool none() const // Ã­Ã¥ any
 	{
-		for (int i = 0; i < N; ++i)
-		{
-			if (mainmass[i] == 1)
-				return false;
-		}
-		return true;
+		return !(any());
 	}
 
-	bool all() const // åñëè âñå 1 - true
+	bool all() const // Ã¥Ã±Ã«Ã¨ Ã¢Ã±Ã¥ 1 - true
 	{
 		for (int i = 0; i < N; ++i)
 		{
@@ -125,7 +142,7 @@ public:
 
 	// operators
 
-	bitset& operator&= (const bitset& rhs)
+	TBitset& operator&= (const TBitset& rhs)
 	{
 		for (int i = 0; i < N; ++i)
 		{
@@ -139,7 +156,7 @@ public:
 		returm *this;
 	}
 
-	bitset& operator|= (const bitset& rhs) //
+	TBitset& operator|= (const TBitset& rhs) //
 	{
 
 		if (mainmass[i] == 1 || rhs.mainmass[i] == 1)
@@ -148,55 +165,128 @@ public:
 		}
 		else
 			mainmass[i] = 0;
-	returm *this;
+		returm *this;
 	}
 
-	bitset& operator^= (const bitset& rhs) 
+	TBitset& operator^= (const TBitset& rhs)
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == rhs.mainmass[i])
-				mainmass[i] = 0;
-			else
-				mainmass[i] = 1;
+			mainmass[i] = !(mainmass[i] == rhs.mainmass[i]);
 		}
 		return *this;
 	}
-	
-	bitset& operator<<= (size_t pos);
-	
-	bitset& operator>>= (size_t pos);
-	
-	bitset operator~() const
+
+	TBitset& operator<<= (size_t pos)
+	{
+		for (int i = 0; i < N; ++i)
+		{
+			if (i + pos < N)
+				mainmass[i] = mainmass[i + pos];
+			else
+				mainmass[i] = 0;
+		}
+		return *this;
+	}
+
+	TBitset& operator>>= (size_t pos)
+	{
+		for (int i = N - 1; i > 0; --i)
+		{
+			if (i - pos >= 0)
+				mainmass[i] = mainmass[i - pos];
+			else
+				mainmass[i] = 0;
+		}
+		return *this;
+	}
+
+	TBitset operator~() 
 	{
 		for (int i = 0; i < N; ++i)
 		{
 			if (mainmass[i] == 0)
 				mainmass[i] = 1;
 			else
-				mainmass = 0;
+				mainmass[i] = 0;
 		}
 		return *this;
 	}
-	
-	bitset operator<<(size_t pos) const;
-	
-	bitset operator >> (size_t pos) const
+
+	TBitset operator<<(size_t pos) const
 	{
-		bool tmp = 0;
+		for (int i = 0; i < N; ++i)
+		{
+			if (i + pos < N)
+				mainmass[i] = mainmass[i + pos];
+			else
+				mainmass[i] = 0;
+		}
+		return *this;
+	}
+
+	TBitset operator >> (size_t pos) const
+	{
 		for (int i = N - 1; i > 0; --i)
 		{
-			mainmass[i] = mainmass[i - 1]
+			if (i - pos >= 0)
+				mainmass[i] = mainmass[i - pos];
+			else
+				mainmass[i] = 0;
 		}
-		mainmass[0] = 0;
 		return *this;
 	}
-	bool operator== (const bitset& rhs) const;
-
+	bool operator== (const TBitset& rhs) const
+	{
+		if (N != rhs.N)
+			return false;
+		for (int i == 0; i < N; ++i)
+		{
+			if (mainmass[i] != rhs.mainmass[i])
+				return false;
+		}
+		return true;
+	}
+	
+	std::string to_string() // error
+	{
+		std::string str = nullptr;
+		int j = 0;
+		for (int i = N - 1; i >= 0; --i)
+		{
+			if (mainmass[j] == false)
+				str[i] = 0;
+			else str[i] = 1;
+			j++;
+		}
+		return *str;
+	}
+	
+	unsigned long to_ulong()
+	{
+		double tolong = 0;
+		int two = 1;
+		for (int i = N - 1; i >= 0; --i)
+		{
+			if (tolong + mainmass[i] * two > 4 294 967 295)
+				throw() std::overflow_error("Overflow");
+			tolong += mainmass[i] * two;
+			two *= 2;
+		}
+		return tolong;
+	}
 };
 
 template<size_t N>
-bitset<N> operator& (const bitset<N>& lhs, const bitset<N>& rhs)
+std::ostream & operator<<(std::ostream &out, TBitset<N> &tmb)
+{
+	for (int i = 0; i < N; ++i)
+		out << tmb[i];
+}
+
+
+template<size_t N>
+TBitset<N> operator& (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	for (int i = 0; i < N; ++i)
 	{
@@ -211,7 +301,7 @@ bitset<N> operator& (const bitset<N>& lhs, const bitset<N>& rhs)
 }
 
 template<size_t N>
-bitset<N> operator| (const bitset<N>& lhs, const bitset<N>& rhs)
+TBitset<N> operator| (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	if (lhs.mainmass[i] == 1 || rhs.mainmass[i] == 1)
 	{
@@ -223,7 +313,7 @@ bitset<N> operator| (const bitset<N>& lhs, const bitset<N>& rhs)
 }
 
 template<size_t N>
-bitset<N> operator^ (const bitset<N>& lhs, const bitset<N>& rhs)
+TBitset<N> operator^ (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	for (int i = 0; i < N; ++i)
 	{
@@ -234,3 +324,13 @@ bitset<N> operator^ (const bitset<N>& lhs, const bitset<N>& rhs)
 	}
 	return *lhs;
 }
+
+int main()
+{
+	std::string mainmass = "00101101";
+	TBitset<4> bit(mainmass, 0, 8);
+	std::cout << bit;
+}
+
+
+
