@@ -1,11 +1,54 @@
 #include<iostream>
 #include<string>
 #include<array>
+#include <math.h>
+
+template < size_t N >
+class bitT {
+public:
+	long long int bit_num = 0;
+	int len = N;
+	bitT() { bit_num = 0; }
+
+	~bitT() 
+	{
+		bit_num = 0;
+	}
+
+
+	bool operator[](int index) const 
+	{
+		
+		long long int tmp = bit_num;
+
+		int real_i = len - 1 - index;
+
+		bool b;
+
+		for (int x = 0; x <= real_i; x++) {
+			b = tmp % 2;
+			tmp /= 2;
+		}
+		return b;
+	}
+
+	void setBit(int index, bool b) 
+	{
+
+		int real_i = len - index-1;
+
+		bool curr_bit = (*this)[index];
+		if (curr_bit == 0 && b == 1) bit_num += pow(2, real_i);
+		else if (curr_bit == 1 && b == 1) bit_num -= pow(2, real_i);
+
+	}
+};
+
 template < size_t N >
 class TBitset
 {
 private:
-	std::array<bool, N> mainmass;
+	bitT<N> mainmass;
 public:
 
 	// constructors
@@ -14,10 +57,9 @@ public:
 
 	TBitset(unsigned long val)
 	{
-		
 		for (int i = N - 1; i >= 0; --i)
 		{
-			mainmass[i] = val % 2;
+			mainmass.setBit(i, val % 2);
 			val = val / 2;
 		}
 	}
@@ -32,14 +74,15 @@ public:
 			if (j >= N)
 				return;
 			if (str[i] == '0')
-				mainmass[j] = 0;
+				mainmass.setBit(j, 0);
 			else if (str[i] == '1')
-				mainmass[j] = 1;
+				mainmass.setBit(j, 1);
 			else
 			{
 				~TBitset();
 				throw std::exception("Error!");
 			}
+			j++;
 		}
 	}
 
@@ -49,7 +92,9 @@ public:
 
 	TBitset& set() // çàïîëíÿåò âñå 1
 	{
-		memset(mainmass, 1, sizeof(mainmass));
+
+		mainmass.bit_num = pow(2, N) - 1;
+		//memset(mainmass, 1, sizeof(mainmass));
 	};
 
 	TBitset& set(size_t index, bool value) //çàïîëíÿåò êîíêðåòíîå çíà÷åíèå value; 
@@ -63,12 +108,12 @@ public:
 
 	TBitset& reset()
 	{
-		memset(mainmass, 0, sizeof(mainmass));
+		mainmas = 0;
 	}
 
 	TBitset& reset(size_t index)
 	{
-		mainmass[index] = 0;
+		mainmass.setBit(index, 0);
 	}
 
 	TBitset& flip()// íåãàòèâ
@@ -83,14 +128,15 @@ public:
 	{
 		if (index >= N || index < 0)
 			throw() std::exception("Error");
-		mainmass[index] ^= 1;
+		mainmass.setBit(index, mainmass[index] ^ 1);
 	}
 
 	// bit access
 
 	bool& operator[](size_t index) const
 	{
-		return mainmass[index];
+		bool a = mainmass[index];
+		return a;
 	}
 
 	size_t count() const // ñ÷èòàåò 1
@@ -148,23 +194,25 @@ public:
 		{
 			if (mainmass[i] == 0 || rhs.mainmass[i] == 0)
 			{
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 			}
 			else
-				mainmass[i] = 1;
+				mainmass.setBit(i, 1);
 		}
 		returm *this;
 	}
 
 	TBitset& operator|= (const TBitset& rhs) //
 	{
-
-		if (mainmass[i] == 1 || rhs.mainmass[i] == 1)
+		for (int i = 0; i < N; ++i)
 		{
-			mainmass[i] = 1;
+			if (mainmass[i] == 1 || rhs.mainmass[i] == 1)
+			{
+				mainmass.setBit(i, 1);
+			}
+			else
+				mainmass.setBit(i, 0);
 		}
-		else
-			mainmass[i] = 0;
 		returm *this;
 	}
 
@@ -172,7 +220,7 @@ public:
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			mainmass[i] = !(mainmass[i] == rhs.mainmass[i]);
+			mainmass.setBit(i, !(mainmass[i] == rhs.mainmass[i]));
 		}
 		return *this;
 	}
@@ -182,9 +230,9 @@ public:
 		for (int i = 0; i < N; ++i)
 		{
 			if (i + pos < N)
-				mainmass[i] = mainmass[i + pos];
+				mainmass.setBit(i, mainmass[i + pos]);
 			else
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
@@ -194,9 +242,9 @@ public:
 		for (int i = N - 1; i > 0; --i)
 		{
 			if (i - pos >= 0)
-				mainmass[i] = mainmass[i - pos];
+				mainmass.setBit(i, mainmass[i - pos]);
 			else
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
@@ -206,37 +254,37 @@ public:
 		for (int i = 0; i < N; ++i)
 		{
 			if (mainmass[i] == 0)
-				mainmass[i] = 1;
+				mainmass.setBit(i, 1);
 			else
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
 
-	TBitset operator<<(size_t pos) const
+	TBitset operator<<(size_t pos) 
 	{
 		for (int i = 0; i < N; ++i)
 		{
 			if (i + pos < N)
-				mainmass[i] = mainmass[i + pos];
+				mainmass.setBit(i, mainmass[i + pos]);
 			else
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
 
-	TBitset operator >> (size_t pos) const
+	TBitset operator >> (size_t pos) 
 	{
-		for (int i = N - 1; i > 0; --i)
+		for (int i = N - 1; i >= 0; --i)
 		{
 			if (i - pos >= 0)
-				mainmass[i] = mainmass[i - pos];
+				mainmass.setBit(i, mainmass[i - pos]);
 			else
-				mainmass[i] = 0;
+				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
-	bool operator== (const TBitset& rhs) const
+	bool operator== (const TBitset& rhs) 
 	{
 		if (N != rhs.N)
 			return false;
@@ -282,6 +330,15 @@ std::ostream & operator<<(std::ostream &out, TBitset<N> &tmb)
 {
 	for (int i = 0; i < N; ++i)
 		out << tmb[i];
+	return out;
+}
+
+template<size_t N>
+std::ostream & operator>>(std::ostream &in, TBitset<N> &tmb)
+{
+	for (int i = 0; i < N; ++i)
+		in << tmb[i];
+	return in;
 }
 
 
@@ -292,10 +349,10 @@ TBitset<N> operator& (const TBitset<N>& lhs, const TBitset<N>& rhs)
 	{
 		if (lhs.mainmass[i] == 0 || rhs.mainmass[i] == 0)
 		{
-			lhs.mainmass[i] = 0;
+			lhs.mainmass.setBit(i, 0);
 		}
 		else
-			lhs.mainmass[i] = 1;
+			lhs.mainmass.setBit(i, 1);
 	}
 	returm *lhs;
 }
@@ -305,10 +362,10 @@ TBitset<N> operator| (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	if (lhs.mainmass[i] == 1 || rhs.mainmass[i] == 1)
 	{
-		lhs.mainmass[i] = 1;
+		lhs.mainmass.setBit(i, 1);
 	}
 	else
-		lhs.mainmass[i] = 0;
+		lhs.mainmass.setBit(i, 0);
 	returm *lhs;
 }
 
@@ -318,18 +375,19 @@ TBitset<N> operator^ (const TBitset<N>& lhs, const TBitset<N>& rhs)
 	for (int i = 0; i < N; ++i)
 	{
 		if (lhs.mainmass[i] == rhs.mainmass[i])
-			lhs.mainmass[i] = 0;
+			lhs.mainmass.setBit(i, 0);
 		else
-			lhs.mainmass[i] = 1;
+			lhs.mainmass.setBit(i, 1);
 	}
 	return *lhs;
 }
 
 int main()
 {
-	std::string mainmass = "00101101";
-	TBitset<4> bit(mainmass, 0, 8);
-	std::cout << bit;
+	std::string mainmass = "00110111";
+	TBitset<8> bit(mainmass, 0, 8);
+	bit >> 0;
+	std::cout << bit << std::endl;
 }
 
 
