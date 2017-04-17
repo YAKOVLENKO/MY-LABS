@@ -306,14 +306,11 @@ public:
 
 	std::string to_string() // error
 	{
-		std::string str = nullptr;
-		int j = 0;
-		for (int i = N - 1; i >= 0; --i)
+		std::string str;
+		str.reserve(N);
+		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[j] == false)
-				str[i] = 0;
-			else str[i] = 1;
-			j++;
+			str[i] = 48 + mainmass[i];
 		}
 		return str;
 	}
@@ -340,15 +337,6 @@ std::ostream & operator<<(std::ostream &out, TBitset<N> &tmb)
 		out << tmb[i];
 	return out;
 }
-
-template<size_t N>
-std::ostream & operator >> (std::ostream &in, TBitset<N> &tmb)
-{
-	for (int i = 0; i < N; ++i)
-		in << tmb[i];
-	return in;
-}
-
 
 template<size_t N>
 TBitset<N> operator& (const TBitset<N>& lhs, const TBitset<N>& rhs)
@@ -396,5 +384,3 @@ TBitset<N> operator^ (const TBitset<N>& lhs, const TBitset<N>& rhs)
 	}
 	return tmp;
 }
-
-
