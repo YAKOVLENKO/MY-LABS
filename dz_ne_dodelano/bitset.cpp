@@ -180,7 +180,11 @@ public:
 
 	TBitset& reset()
 	{
-		mainmass.bit_num = 0;
+		for (int i = 0; i < N; ++i)
+		{
+			mainmass.setBit(i, 0);
+		}
+		//mainmass.bit_num = 0;
 		return *this;
 	}
 
@@ -464,16 +468,7 @@ template<size_t N>
 TBitset<N> operator& (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	TBitset<N> tmp = lhs;
-
-	for (int i = 0; i < N; ++i)
-	{
-		if (lhs.mainmass.getbyte(i) == 0 || rhs.mainmass.getbyte(i) == 0)
-		{
-			tmp.mainmass.setBit(i, 0);
-		}
-		else
-			tmp.mainmass.setBit(i, 1);
-	}
+	tmp &= rhs;
 	return tmp;
 }
 
@@ -482,16 +477,7 @@ TBitset<N> operator| (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 
 	TBitset<N> tmp = lhs;
-
-	for (int i = 0; i < N; ++i)
-	{
-		if (lhs.mainmass.getbyte(i) == 0 && rhs.mainmass.getbyte(i) == 0)
-		{
-			tmp.mainmass.setBit(i, 0);
-		}
-		else
-			tmp.mainmass.setBit(i, 1);
-	}
+	tmp |= rhs;
 	return tmp;
 }
 
@@ -500,9 +486,6 @@ TBitset<N> operator^ (const TBitset<N>& lhs, const TBitset<N>& rhs)
 {
 	TBitset<N> tmp = lhs;
 
-	for (int i = 0; i < N; ++i)
-	{
-		tmp.mainmass.setBit(i, lhs.mainmass.getbyte(i) ^ rhs.mainmass.getbyte(i));
-	}
+	tmp ^= rhs;
 	return tmp;
 }
