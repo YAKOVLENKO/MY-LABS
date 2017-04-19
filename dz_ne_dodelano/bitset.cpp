@@ -3,53 +3,137 @@
 #include<array>
 #include <math.h>
 
-template < size_t N >
-class bitT {
-public:
-	long long int bit_num = 0;
-	int len = N;
-	bitT() { bit_num = 0; }
 
-	~bitT()
+
+template < int N >
+class TBit {
+
+public:
+
+	unsigned char * bit_num;
+	int len;
+	TBit() 
 	{
-		bit_num = 0;
+		bit_num = new unsigned char[(N / 8) + ((N % 8) > 0)];
+		len = (N / 8) + ((N % 8) > 0);
+		for (int i = 0; i < len; ++i)
+			bit_num[i] = 0;
+		len = N;
 	}
 
-
-	bool operator[](int index) const
+	~TBit()
 	{
+		//if (bit_num != nullptr && bit_num != NULL)  delete[] bit_num;
+	}
 
-		long long int tmp = bit_num;
+	class TChangeBit : public TBit 
+	{
+	public:
+		int index;
+		TBit point;
 
+		TChangeBit(int ind, TBit&  p) // пров
+		{
+			index = ind;
+			point = p;
+		}
+
+
+		TChangeBit operator=(bool val) // пров
+		{
+			point.setBit(index, val);
+			return *this;
+		}
+
+
+		operator bool() 
+		{
+			return point.getbyte(index);
+		}
+
+	};
+
+
+
+
+	const bool operator[](int index) const // пров
+	{
 		int real_i = len - 1 - index;
-
 		bool b;
-
-		for (int x = 0; x <= real_i; x++) {
-			b = tmp % 2;
-			tmp /= 2;
+		int chunk_num = (real_i / 8);
+		int num_in_chunk = real_i % 8;
+		unsigned char current_chank = bit_num[chunk_num];
+		for (int i = 0; i <= num_in_chunk; ++i) 
+		{
+			b = current_chank % 2;
+			current_chank /= 2;
 		}
 		return b;
+
 	}
 
-	void setBit(int index, bool b)
+
+	bool getbyte(int index) const // пров 
 	{
-
-		int real_i = len - index - 1;
-
-		bool curr_bit = (*this)[index];
-		if (curr_bit == 0 && b == 1) bit_num += pow(2, real_i);
-		else if (curr_bit == 1 && b == 0) bit_num -= pow(2, real_i);
+		int real_i = len - 1 - index;
+		bool b;
+		int chunk_num = (real_i / 8);
+		int num_in_chunk = real_i % 8;
+		unsigned char current_chank = bit_num[chunk_num];
+		for (int i = 0; i <= num_in_chunk; ++i) 
+		{
+			b = current_chank % 2;
+			current_chank /= 2;
+		}
+		return b;
 
 	}
+
+
+	TChangeBit operator[](int index) // пров
+	{
+		TChangeBit a(index, *this);
+		return a;
+	}
+
+	TChangeBit change(int index) // пров
+	{
+		TChangeBit a(index, *this);
+		return a;
+	}
+
+	void setBit(int index, bool b) // пров
+	{
+		int real_i = len - 1 - index;
+		int chunk_num = (real_i / 8);
+		int num_in_chunk = real_i % 8;
+
+		bool curr_bit;
+		unsigned char current_chank = bit_num[chunk_num];
+		for (int i = 0; i <= num_in_chunk; ++i) 
+		{
+			curr_bit = current_chank % 2;
+			current_chank /= 2;
+		}
+		if (curr_bit == 0 && b == 1) 
+			bit_num[chunk_num] += pow(2, num_in_chunk);
+		else if (curr_bit == 1 && b == 0) 
+			bit_num[chunk_num] -= pow(2, num_in_chunk);
+	}
+
+
+
 };
+
+
 
 template < size_t N >
 class TBitset
 {
 private:
-	bitT<N> mainmass;
+	TBit<N> mainmass;
 public:
+
 
 	// constructors
 
@@ -90,16 +174,14 @@ public:
 
 	// bit operations
 
-	TBitset& set() // çàïîëíÿåò âñå 1
+	TBitset& set() // ????????? ??? 1
 	{
-
-		mainmass.bit_num = pow(2, N) - 1;
-
+		for (int i = 0; i < N; ++i)
+			mainmass.setBit(i, 1);
 		return *this;
-		//memset(mainmass, 1, sizeof(mainmass));
 	};
 
-	TBitset& set(size_t index, bool value) //çàïîëíÿåò êîíêðåòíîå çíà÷åíèå value;
+	TBitset& set(size_t index, bool value = true) //????????? ?????????? ???????? value;
 	{
 		if (index >= N || index < 0)
 			throw std::exception();
@@ -119,12 +201,12 @@ public:
 		return *this;
 	}
 
-	TBitset& flip()// íåãàòèâ
+	TBitset& flip()// ???????
 	{
-	
+
 		for (int i = 0; i < N; i++)
 		{
-			mainmass.setBit(i, mainmass[i] ^ 1);
+			mainmass.setBit(i, mainmass.getbyte(i) ^ 1);
 		}
 		return *this;
 	}
@@ -133,24 +215,28 @@ public:
 	{
 		if (index >= N || index < 0)
 			throw std::exception();
-		mainmass.setBit(index, mainmass[index] ^ 1);
+		mainmass.setBit(index, mainmass.getbyte(index) ^ 1);
 		return *this;
 	}
 
 	// bit access
 
-	bool& operator[](size_t index) const
+
+	typename TBit<N>::TChangeBit operator[](size_t index)
 	{
-		bool a = mainmass[index];
-		return a;
+		//bool a = mainmass[index];
+
+		typename TBit<N>::TChangeBit tmp = mainmass.change(index);
+		return tmp;
 	}
 
-	size_t count() const // ñ÷èòàåò 1
+
+	size_t count() const // ??????? 1
 	{
 		size_t count = 0;
 		for (int i = 0; i < N; ++i)
 		{
-			count += mainmass[i];
+			count += mainmass.getbyte(i);
 		}
 		return count;
 	}
@@ -160,33 +246,33 @@ public:
 		return N;
 	}
 
-	bool test(size_t index) const // òî æå ñàìîå, ÷òî è [], êèäàåò std::out_of_range (â îòëè÷èå îò []), åñëè áîëüøå èëè = size
+	bool test(size_t index) const // ?? ?? ?????, ??? ? [], ?????? std::out_of_range (? ??????? ?? []), ???? ?????? ??? = size
 	{
 		if (index >= N || index < 0)
 			throw std::out_of_range("Error");
-		return mainmass[index];
+		return mainmass.getbyte(index);
 	}
 
-	bool any() const // åñëè åñòü 1 â êëàññå - true, â èíîì ñëó÷àå - false;
+	bool any() // ???? ???? 1 ? ?????? - true, ? ???? ?????? - false;
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 1)
+			if ((*this).operator[](i) == 1)
 				return true;
 		}
 		return false;
 	}
 
-	bool none() const // íå any
+	bool none() // ?? any
 	{
 		return !(any());
 	}
 
-	bool all() const // åñëè âñå 1 - true
+	bool all() const // ???? ??? 1 - true
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 0)
+			if (mainmass.getbyte(i) == 0)
 				return false;
 		}
 		return true;
@@ -198,7 +284,7 @@ public:
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 0 || rhs.mainmass[i] == 0)
+			if (mainmass.getbyte(i) == 0 || rhs.mainmass.getbyte(i) == 0)
 			{
 				mainmass.setBit(i, 0);
 			}
@@ -212,7 +298,7 @@ public:
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 1 || rhs.mainmass[i] == 1)
+			if (mainmass.getbyte(i) == 1 || rhs.mainmass.getbyte(i) == 1)
 			{
 				mainmass.setBit(i, 1);
 			}
@@ -226,7 +312,7 @@ public:
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			mainmass.setBit(i, !(mainmass[i] == rhs.mainmass[i]));
+			mainmass.setBit(i, !(mainmass.getbyte(i) == rhs.mainmass.getbyte(i)));
 		}
 		return *this;
 	}
@@ -236,7 +322,7 @@ public:
 		for (int i = 0; i < N; ++i)
 		{
 			if (i + pos < N)
-				mainmass.setBit(i, mainmass[i + pos]);
+				mainmass.setBit(i, mainmass.getbyte(i + pos));
 			else
 				mainmass.setBit(i, 0);
 		}
@@ -248,7 +334,7 @@ public:
 		for (int i = N - 1; i > 0; --i)
 		{
 			if (i - pos >= 0)
-				mainmass.setBit(i, mainmass[i - pos]);
+				mainmass.setBit(i, mainmass.getbyte(i - pos));
 			else
 				mainmass.setBit(i, 0);
 		}
@@ -259,7 +345,7 @@ public:
 	{
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] == 0)
+			if (mainmass.getbyte(i) == 0)
 				mainmass.setBit(i, 1);
 			else
 				mainmass.setBit(i, 0);
@@ -272,7 +358,7 @@ public:
 		for (int i = 0; i < N; ++i)
 		{
 			if (i + pos < N)
-				mainmass.setBit(i, mainmass[i + pos]);
+				mainmass.setBit(i, mainmass.getbyte(i + pos));
 			else
 				mainmass.setBit(i, 0);
 		}
@@ -284,35 +370,42 @@ public:
 		for (int i = N - 1; i >= 0; --i)
 		{
 			if (i - pos >= 0) {
-				int a = mainmass[i - pos];
-				mainmass.setBit(i, mainmass[i - pos]);
+				int a = mainmass.getbyte(i - pos);
+				mainmass.setBit(i, mainmass.getbyte(i - pos));
 			}
 			else
 				mainmass.setBit(i, 0);
 		}
 		return *this;
 	}
+
 	bool operator== (const TBitset& rhs)
 	{
 		if (N != rhs.size())
 			return false;
 		for (int i = 0; i < N; ++i)
 		{
-			if (mainmass[i] != rhs.mainmass[i])
+			if (mainmass.getbyte(i) != rhs.mainmass.getbyte(i))
 				return false;
 		}
 		return true;
 	}
 
-	std::string to_string() // error
+	std::string to_string() // 
 	{
-		std::string str;
-		str.reserve(N);
+		/*std::string str;
+		str.reserve(N);*/
+		char* str = new char[N+1];
 		for (int i = 0; i < N; ++i)
 		{
-			str[i] = 48 + mainmass[i];
+			str[i] = 48 + mainmass.getbyte(i);
 		}
-		return str;
+		str[N] = '\0';
+		std::string stri;
+		stri.reserve(N);
+		stri = str;
+		delete[] str;
+		return stri;
 	}
 
 	unsigned long to_ulong()
@@ -321,20 +414,62 @@ public:
 		int two = 1;
 		for (int i = N - 1; i >= 0; --i)
 		{
-			if (tolong + mainmass[i] * two > 4294967295)
+			if (tolong + mainmass.getbyte(i) * two > 4294967295)
 				throw std::overflow_error("Overflow");
-			tolong += mainmass[i] * two;
+			tolong += mainmass.getbyte(i) * two;
 			two *= 2;
 		}
 		return tolong;
 	}
+
+
+
+	// iterator
+/*	class TIterator :public TBitset
+	{
+	public:
+		int index;
+
+		TIterator(int ind) {
+			index = ind;
+		}
+
+		TIterator operator=(TIterator iter) {
+			index = iter.index;
+			return *this;
+		}
+
+		bool operator==(TIterator iter) {
+			return index == iter.index;
+		}
+
+		bool operator!=(TIterator iter) {
+			return index != iter.index;
+		}
+
+		bool operator++(int) {
+			index++;
+		}
+
+		bool operator++() {
+			index++;
+		}
+
+
+		bool operator *()
+		{
+			return (*this)[index];
+		}
+
+	};*/
+
 };
 
 template<size_t N>
-std::ostream & operator<<(std::ostream &out, TBitset<N> &tmb)
+std::ostream & operator<<(std::ostream &out, TBitset<N> &rhs)
 {
 	for (int i = 0; i < N; ++i)
-		out << tmb[i];
+		out << rhs[i];
 	return out;
 }
 
@@ -345,7 +480,7 @@ TBitset<N> operator& (const TBitset<N>& lhs, const TBitset<N>& rhs)
 
 	for (int i = 0; i < N; ++i)
 	{
-		if (lhs.mainmass[i] == 0 || rhs.mainmass[i] == 0)
+		if (lhs.mainmass.getbyte(i) == 0 || rhs.mainmass.getbyte(i) == 0)
 		{
 			tmp.mainmass.setBit(i, 0);
 		}
@@ -363,7 +498,7 @@ TBitset<N> operator| (const TBitset<N>& lhs, const TBitset<N>& rhs)
 
 	for (int i = 0; i < N; ++i)
 	{
-		if (lhs.mainmass[i] == 0 && rhs.mainmass[i] == 0)
+		if (lhs.mainmass.getbyte(i) == 0 && rhs.mainmass.getbyte(i) == 0)
 		{
 			tmp.mainmass.setBit(i, 0);
 		}
@@ -380,7 +515,7 @@ TBitset<N> operator^ (const TBitset<N>& lhs, const TBitset<N>& rhs)
 
 	for (int i = 0; i < N; ++i)
 	{
-		tmp.mainmass.setBit(i, lhs.mainmass[i] ^ rhs.mainmass[i]);
+		tmp.mainmass.setBit(i, lhs.mainmass.getbyte(i) ^ rhs.mainmass.getbyte(i));
 	}
 	return tmp;
 }
