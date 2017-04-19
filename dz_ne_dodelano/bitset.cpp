@@ -3,8 +3,6 @@
 #include<array>
 #include <math.h>
 
-
-
 template < int N >
 class TBit {
 
