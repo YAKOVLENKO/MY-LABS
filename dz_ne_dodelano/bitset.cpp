@@ -54,7 +54,7 @@ public:
 	const bool operator[](int index) const // пров
 	{
 		int real_i = len - 1 - index;
-		bool b;
+		bool ret;
 		int chunk_num = (real_i / 8);
 		int num_in_chunk = real_i % 8;
 		unsigned char current_chank = bit_num[chunk_num];
@@ -63,14 +63,14 @@ public:
 			b = current_chank % 2;
 			current_chank /= 2;
 		}
-		return b;
+		return ret;
 
 	}
 
 	bool getbyte(int index) const // пров 
 	{
 		int real_i = len - 1 - index;
-		bool b;
+		bool ret;
 		int chunk_num = (real_i / 8);
 		int num_in_chunk = real_i % 8;
 		unsigned char current_chank = bit_num[chunk_num];
@@ -79,22 +79,22 @@ public:
 			b = current_chank % 2;
 			current_chank /= 2;
 		}
-		return b;
+		return ret;
 	}
 	
 	TChangeBit operator[](int index) // пров
 	{
-		TChangeBit a(index, *this);
-		return a;
+		TChangeBit ret(index, *this);
+		return ret;
 	}
 
 	TChangeBit change(int index) // пров
 	{
-		TChangeBit a(index, *this);
-		return a;
+		TChangeBit ret(index, *this);
+		return ret;
 	}
 
-	void setBit(int index, bool b) // пров
+	void setBit(int index, bool newval) // пров
 	{
 		int real_i = len - 1 - index;
 		int chunk_num = (real_i / 8);
@@ -107,9 +107,9 @@ public:
 			curr_bit = current_chank % 2;
 			current_chank /= 2;
 		}
-		if (curr_bit == 0 && b == 1) 
+		if (curr_bit == 0 && newval == 1) 
 			bit_num[chunk_num] += pow(2, num_in_chunk);
-		else if (curr_bit == 1 && b == 0) 
+		else if (curr_bit == 1 && newval == 0) 
 			bit_num[chunk_num] -= pow(2, num_in_chunk);
 	}
 };
