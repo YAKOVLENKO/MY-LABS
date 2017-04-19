@@ -12,7 +12,7 @@ public:
 
 	unsigned char * bit_num;
 	int len;
-	TBit() 
+	TBit()
 	{
 		bit_num = new unsigned char[(N / 8) + ((N % 8) > 0)];
 		len = (N / 8) + ((N % 8) > 0);
@@ -26,7 +26,7 @@ public:
 		//if (bit_num != nullptr)  delete[] bit_num;
 	}
 
-	class TChangeBit : public TBit 
+	class TChangeBit : public TBit
 	{
 	public:
 		int index;
@@ -44,7 +44,7 @@ public:
 			return *this;
 		}
 
-		operator bool() 
+		operator bool()
 		{
 			return point.getbyte(index);
 		}
@@ -58,7 +58,7 @@ public:
 		int chunk_num = (real_i / 8);
 		int num_in_chunk = real_i % 8;
 		unsigned char current_chank = bit_num[chunk_num];
-		for (int i = 0; i <= num_in_chunk; ++i) 
+		for (int i = 0; i <= num_in_chunk; ++i)
 		{
 			b = current_chank % 2;
 			current_chank /= 2;
@@ -74,14 +74,14 @@ public:
 		int chunk_num = (real_i / 8);
 		int num_in_chunk = real_i % 8;
 		unsigned char current_chank = bit_num[chunk_num];
-		for (int i = 0; i <= num_in_chunk; ++i) 
+		for (int i = 0; i <= num_in_chunk; ++i)
 		{
-			b = current_chank % 2;
+			ret = current_chank % 2;
 			current_chank /= 2;
 		}
 		return ret;
 	}
-	
+
 	TChangeBit operator[](int index) // пров
 	{
 		TChangeBit ret(index, *this);
@@ -102,14 +102,14 @@ public:
 
 		bool curr_bit;
 		unsigned char current_chank = bit_num[chunk_num];
-		for (int i = 0; i <= num_in_chunk; ++i) 
+		for (int i = 0; i <= num_in_chunk; ++i)
 		{
 			curr_bit = current_chank % 2;
 			current_chank /= 2;
 		}
-		if (curr_bit == 0 && newval == 1) 
+		if (curr_bit == 0 && newval == 1)
 			bit_num[chunk_num] += pow(2, num_in_chunk);
-		else if (curr_bit == 1 && newval == 0) 
+		else if (curr_bit == 1 && newval == 0)
 			bit_num[chunk_num] -= pow(2, num_in_chunk);
 	}
 };
@@ -217,7 +217,7 @@ public:
 		typename TBit<N>::TChangeBit tmp = mainmass.change(index);
 		return tmp;
 	}
-	
+
 	size_t count() const // ??????? 1
 	{
 		size_t count = 0;
@@ -382,7 +382,7 @@ public:
 	{
 		/*std::string str;
 		str.reserve(N);*/
-		char* str = new char[N+1];
+		char* str = new char[N + 1];
 		for (int i = 0; i < N; ++i)
 		{
 			str[i] = 48 + mainmass.getbyte(i);
@@ -412,41 +412,41 @@ public:
 
 
 	// iterator
-/*	class TIterator :public TBitset
+	/*	class TIterator :public TBitset
 	{
 	public:
-		int index;
+	int index;
 
-		TIterator(int ind) {
-			index = ind;
-		}
+	TIterator(int ind) {
+	index = ind;
+	}
 
-		TIterator operator=(TIterator iter) {
-			index = iter.index;
-			return *this;
-		}
+	TIterator operator=(TIterator iter) {
+	index = iter.index;
+	return *this;
+	}
 
-		bool operator==(TIterator iter) {
-			return index == iter.index;
-		}
+	bool operator==(TIterator iter) {
+	return index == iter.index;
+	}
 
-		bool operator!=(TIterator iter) {
-			return index != iter.index;
-		}
+	bool operator!=(TIterator iter) {
+	return index != iter.index;
+	}
 
-		bool operator++(int) {
-			index++;
-		}
+	bool operator++(int) {
+	index++;
+	}
 
-		bool operator++() {
-			index++;
-		}
+	bool operator++() {
+	index++;
+	}
 
 
-		bool operator *()
-		{
-			return (*this)[index];
-		}
+	bool operator *()
+	{
+	return (*this)[index];
+	}
 
 	};*/
 
