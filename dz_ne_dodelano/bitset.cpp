@@ -3,6 +3,8 @@
 #include<array>
 #include <math.h>
 
+
+
 template < int N >
 class TBit {
 
@@ -21,7 +23,7 @@ public:
 
 	~TBit()
 	{
-		//if (bit_num != nullptr && bit_num != NULL)  delete[] bit_num;
+		//if (bit_num != nullptr)  delete[] bit_num;
 	}
 
 	class TChangeBit : public TBit 
@@ -36,13 +38,11 @@ public:
 			point = p;
 		}
 
-
 		TChangeBit operator=(bool val) // пров
 		{
 			point.setBit(index, val);
 			return *this;
 		}
-
 
 		operator bool() 
 		{
@@ -50,9 +50,6 @@ public:
 		}
 
 	};
-
-
-
 
 	const bool operator[](int index) const // пров
 	{
@@ -70,7 +67,6 @@ public:
 
 	}
 
-
 	bool getbyte(int index) const // пров 
 	{
 		int real_i = len - 1 - index;
@@ -84,10 +80,8 @@ public:
 			current_chank /= 2;
 		}
 		return b;
-
 	}
-
-
+	
 	TChangeBit operator[](int index) // пров
 	{
 		TChangeBit a(index, *this);
@@ -118,9 +112,6 @@ public:
 		else if (curr_bit == 1 && b == 0) 
 			bit_num[chunk_num] -= pow(2, num_in_chunk);
 	}
-
-
-
 };
 
 
@@ -219,7 +210,6 @@ public:
 
 	// bit access
 
-
 	typename TBit<N>::TChangeBit operator[](size_t index)
 	{
 		//bool a = mainmass[index];
@@ -227,8 +217,7 @@ public:
 		typename TBit<N>::TChangeBit tmp = mainmass.change(index);
 		return tmp;
 	}
-
-
+	
 	size_t count() const // ??????? 1
 	{
 		size_t count = 0;
