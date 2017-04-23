@@ -46,7 +46,6 @@ public:
 		if (Descriptor != nullptr)
 		{
 			fclose(Descriptor);
-			Descriptor = nullptr;
 		}
 	}
 
