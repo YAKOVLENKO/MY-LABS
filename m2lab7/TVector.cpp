@@ -1,4 +1,5 @@
-#include "TVector.h"
+#define _SCL_SECURE_NO_WARNINGS
+#include "header.h"
 #include <iostream>
 
 void printVector(const TVector<int>& vec)
@@ -33,7 +34,7 @@ int main()
 		std::cout << vec.back() << std::endl;
 
 		size_t oldSize = vec.size();
-	//	vec.resize(44);
+		//	vec.resize(44);
 		printVector(vec);
 
 		vec.resize(oldSize);
