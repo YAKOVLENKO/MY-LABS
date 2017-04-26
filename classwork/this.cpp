@@ -253,6 +253,20 @@ struct dutch
 	}
 };
 
+struct rus
+{
+	void operator()(Student& s) const
+	{
+		int aver = ceil(LowAverOneNum(s));
+
+		if (aver == 0)
+			s.Grades.insert(std::pair<std::string, Grade>("Russian", (Grade)1));
+		
+		else
+			s.Grades.insert(std::pair<std::string, Grade>("Russian", (Grade)aver));
+	}
+};
+
 
 
 int main()
@@ -299,7 +313,14 @@ int main()
 	std::for_each(students.begin(), students.end(), LowAver());
 	// Learning of dutch
 	std::for_each(students.begin(), students.end(), dutch());
+	// add Rus
+	std::for_each(students.begin(), students.end(), rus());
+	for (int i = 0; i < students.size(); ++i)
+	{
+		std::cout << students[i].FIO << "'s russian " <<students[i].Grades.find("Russian")->second << std::endl;
+	}
 	// The best at math
 	std::for_each(students.begin(), students.end(), TheBestMath());
+	//int a = ceil(0.6);
 
 }
