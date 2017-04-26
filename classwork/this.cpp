@@ -182,11 +182,11 @@ struct LowAver
 	{
 		if (s.Grades.size() == 0)
 		{
-			std::cout << "Low_Aver " << s.FIO << std::endl;
+			std::cout << "Low_Aver " << s.FIO << " "<<min_average <<std::endl;
 		}
 		if (LowAverOneNum(s) == min_average)
 		{
-			std::cout << "Low_Aver " << s.FIO << std::endl;
+			std::cout << "Low_Aver " << s.FIO << " "<<min_average <<std::endl;
 		}
 	}
 };
@@ -259,8 +259,8 @@ struct rus
 	{
 		int aver = ceil(LowAverOneNum(s));
 
-		if (aver == 0)
-			s.Grades.insert(std::pair<std::string, Grade>("Russian", (Grade)1));
+		if (aver <= 0)
+			s.Grades.insert(std::pair<std::string, Grade>("Russian", Grade::F));
 		
 		else
 			s.Grades.insert(std::pair<std::string, Grade>("Russian", (Grade)aver));
