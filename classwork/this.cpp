@@ -97,6 +97,29 @@ std::vector<Student> LoadStudents()
 }
 
 
+Grade TBMath(std::vector<Student> stud)
+{
+	Grade best = Grade::F;
+	for (int i = 0; i < stud.size(); ++i)
+	{
+		if (stud[i].Grades.count("math") == 1 && stud[i].Grades.find("math")->second > best)
+		{
+			best = stud[i].Grades.find("math")->second;
+		}
+	}
+	return best;
+}
+
+struct TheBestMath
+{
+	Grade thebest = TBMath(LoadStudents());
+	void operator()(const Student& s) const
+	{
+		if (s.Grades.find("math")->second == thebest)
+			std::cout << "Best in math " << s.FIO << std::endl;
+	}
+};
+
 struct FindStudentGroup
 {
 	std::string neededGroup;
@@ -264,4 +287,5 @@ int main()
 
 	std::for_each(students.begin(), students.end(), MaxAndMinSub());
 	std::for_each(students.begin(), students.end(), LowAver());
+	std::for_each(students.begin(), students.end(), TheBestMath());
 }
