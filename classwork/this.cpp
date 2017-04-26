@@ -242,7 +242,16 @@ struct mathcs
 		}
 	}
 };
-
+struct dutch
+{
+	void operator()(const Student& s) const
+	{
+		if (s.Grades.count("dutch") == 1)
+			std::cout << s.FIO << "'s dutch " << s.Grades.find("dutch")->second << std::endl;
+		else
+			std::cout<< s.FIO << " doesn't learn dutch" << std::endl;
+	}
+};
 
 
 
@@ -282,10 +291,15 @@ int main()
 	);
 	std::cout << cnt2 << std::endl;
 
+	// math = A; cs = B
 	std::for_each(students.begin(), students.end(), mathcs());
-	//std::cout << students[1].Grades.size() << std::endl;
-
+	// Max and min count of subjects;
 	std::for_each(students.begin(), students.end(), MaxAndMinSub());
+	// Minimum of average
 	std::for_each(students.begin(), students.end(), LowAver());
+	// Learning of dutch
+	std::for_each(students.begin(), students.end(), dutch());
+	// The best at math
 	std::for_each(students.begin(), students.end(), TheBestMath());
+
 }
