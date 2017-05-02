@@ -53,7 +53,22 @@ public:
 		return bf;
 	}
 
-	static boolean_function from_anf(std::vector<value_type> v);
+	static boolean_function from_anf(std::vector<value_type> v)
+	{
+		std::vector<value_type> newvec;
+		int wall = v.size() - 1;
+		while (wall >= 0)
+		{
+			newvec[wall] = v[0];
+			for (int i = 0; i < v.size() - 1; ++i)
+			{
+				v[i] = (v[i] + v[i + 1]) % 2;
+			}
+			v.pop_back();
+			--wall;
+		}
+		std::reverse(newvec.begin(), newvec.end());
+	}
 
 	boolean_function() = default;
 
@@ -362,7 +377,10 @@ public:
 
 // пусть boolean_function представляет из себя функцию "01110000"
 // тогда get_polynom вернет строку "x0 + x1 + x0x1 + x0x2 + x1x2 + x0x1x2"
-std::string get_polynom(const boolean_function&);
+std::string get_polynom(const boolean_function&)
+{
+
+}
 
 boolean_function operator + (const boolean_function& a, const boolean_function& b)
 {
