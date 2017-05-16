@@ -72,7 +72,7 @@ public:
 /////////////CIRCLE/////////////
 
 /////////////MAIN CIRCLE/////////////
-class TMainCircle : public TCircle
+/*class TMainCircle : public TCircle
 {
 public:
 	TMainCircle() : TCircle()
@@ -100,7 +100,7 @@ public:
 		tc_y = y;
 	};
 
-};
+};*/
 /////////////MAIN CIRCLE/////////////
 
 /////////////MASS/////////////
