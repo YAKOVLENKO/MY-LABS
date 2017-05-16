@@ -72,7 +72,7 @@ public:
 /////////////CIRCLE/////////////
 
 /////////////MAIN CIRCLE/////////////
-class TMainCircle : public TCircle
+/*class TMainCircle : public TCircle
 {
 public:
 	TMainCircle() : TCircle()
@@ -100,7 +100,7 @@ public:
 		tc_y = y;
 	};
 
-};
+};*/
 /////////////MAIN CIRCLE/////////////
 
 /////////////MASS/////////////
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
 
 	LineOfCircles nile;
 
-	TMainCircle aa;
+	TCircle aa;
 
 	int pos = 1, x = 200, y = 500; // для стрелки
 	int real_x = 0, real_y = 100; // для стрелки и движения шара
