@@ -107,16 +107,16 @@ public:
 class LineOfCircles
 {
 	public:
-	TCircle** aab;
+	TCircle** hello;
 	LineOfCircles()
 	{
-		aab = new TCircle*[9];
+		hello = new TCircle*[9];
 		for (int i = 0; i < 9; ++i)
 		{
-			aab[i] = new TCircle[10];
+			hello[i] = new TCircle[10];
 			for (int j = 6; j < 10; ++j)
 			{
-				aab[i][j].ChangeColour(-1);
+				hello[i][j].ChangeColour(-1);
 			}
 		}
 	}
@@ -124,8 +124,8 @@ class LineOfCircles
 	~LineOfCircles()
 	{
 		for (int i = 0; i < 9; ++i)
-			delete[] aab[i];
-		delete[] aab;
+			delete[] hello[i];
+		delete[] hello;
 
 	}
 	
@@ -140,12 +140,12 @@ class LineOfCircles
 				if (m % 2 == 0)
 				{
 					if (k != 8)
-						aab[k][m].PrintCircle(renderer, i + 20, j);
+						hello[k][m].PrintCircle(renderer, i + 20, j);
 					++m;
 				}
 				else
 				{
-					aab[k][m].PrintCircle(renderer, i, j);
+					hello[k][m].PrintCircle(renderer, i, j);
 					++m;
 				}
 			}
@@ -285,9 +285,9 @@ int main(int argc, char* argv[])
 
 					for (int j = 0; j < 10; ++j)
 					{
-						if (nile.aab[i][j].GetX() > -10 && nile.aab[i][j].GetColour() >= 0)
-							if ((abs(x_for_ball - nile.aab[i][j].GetX()) < 30) &&
-								(abs(y_for_ball - nile.aab[i][j].GetY()) < 30))
+						if (nile.hello[i][j].GetX() > -10 && nile.hello[i][j].GetColour() >= 0)
+							if ((abs(x_for_ball - nile.hello[i][j].GetX()) < 30) &&
+								(abs(y_for_ball - nile.hello[i][j].GetY()) < 30))
 							{
 								i_for_checking = i;
 								j_for_checking = j;
@@ -311,9 +311,9 @@ int main(int argc, char* argv[])
 					{
 						for (int j = 0; j < 10; ++j)
 						{
-							if (nile.aab[i][j].GetX() > -10 && nile.aab[i][j].GetColour() >= 0)
-								if ((abs(x_for_ball - nile.aab[i][j].GetX()) < 30) &&
-									(abs(y_for_ball - nile.aab[i][j].GetY()) < 30))
+							if (nile.hello[i][j].GetX() > -10 && nile.hello[i][j].GetColour() >= 0)
+								if ((abs(x_for_ball - nile.hello[i][j].GetX()) < 30) &&
+									(abs(y_for_ball - nile.hello[i][j].GetY()) < 30))
 								{
 									i_for_checking = i;
 									j_for_checking = j;
@@ -331,49 +331,49 @@ int main(int argc, char* argv[])
 				if (y_for_ball <= 0) arm = 4;
 				break;
 			case 3:
-				if (!(y_for_ball == nile.aab[i_for_checking][j_for_checking].GetY()))
+				if (!(y_for_ball == nile.hello[i_for_checking][j_for_checking].GetY()))
 				{
-					if (y_for_ball - nile.aab[i_for_checking][j_for_checking].GetY() > 0) //  если главный шар ниже
+					if (y_for_ball - nile.hello[i_for_checking][j_for_checking].GetY() > 0) //  если главный шар ниже
 					{
-						y_for_ball = nile.aab[i_for_checking][j_for_checking].GetY() + 40;
+						y_for_ball = nile.hello[i_for_checking][j_for_checking].GetY() + 40;
 					}
-					if (y_for_ball - nile.aab[i_for_checking][j_for_checking].GetY() < 0) // если главный шар выше
+					if (y_for_ball - nile.hello[i_for_checking][j_for_checking].GetY() < 0) // если главный шар выше
 					{
-						y_for_ball = nile.aab[i_for_checking][j_for_checking].GetY() - 40;
+						y_for_ball = nile.hello[i_for_checking][j_for_checking].GetY() - 40;
 					}
-					if (x_for_ball - nile.aab[i_for_checking][j_for_checking].GetX() > 0)
+					if (x_for_ball - nile.hello[i_for_checking][j_for_checking].GetX() > 0)
 					{
-						x_for_ball = nile.aab[i_for_checking][j_for_checking].GetX() + 20;
+						x_for_ball = nile.hello[i_for_checking][j_for_checking].GetX() + 20;
 					}
-					if (x_for_ball - nile.aab[i_for_checking][j_for_checking].GetX() < 0)
+					if (x_for_ball - nile.hello[i_for_checking][j_for_checking].GetX() < 0)
 					{
-						x_for_ball = nile.aab[i_for_checking][j_for_checking].GetX() - 20;
+						x_for_ball = nile.hello[i_for_checking][j_for_checking].GetX() - 20;
 					}
-					if (x_for_ball == nile.aab[i_for_checking][j_for_checking].GetX())
+					if (x_for_ball == nile.hello[i_for_checking][j_for_checking].GetX())
 					{
 						if (x_for_ball == 360)
 						{
-							x_for_ball = nile.aab[i_for_checking][j_for_checking].GetX() - 20;
+							x_for_ball = nile.hello[i_for_checking][j_for_checking].GetX() - 20;
 						}
 						else
 						{
-							x_for_ball = nile.aab[i_for_checking][j_for_checking].GetX() + 20;
+							x_for_ball = nile.hello[i_for_checking][j_for_checking].GetX() + 20;
 						}
 
 					}
 					int j_new_ball = y_for_ball / 40 - 1;
 					int i_new_ball = (x_for_ball + 20 * (j_new_ball % 2 - 1)) / 40 - 1;
 
-					if (nile.aab[i_new_ball][j_new_ball].GetColour() == -1)
-						nile.aab[i_new_ball][j_new_ball].ChangeColour(aa.GetColour());
+					if (nile.hello[i_new_ball][j_new_ball].GetColour() == -1)
+						nile.hello[i_new_ball][j_new_ball].ChangeColour(aa.GetColour());
 
 					x_for_ball = 200;
 					y_for_ball = 600;
 					//push = false;
 					
 					int count = 1;
-					nile.aab[i_new_ball][j_new_ball].ChangeKey(1);
-					int main_colour = nile.aab[i_new_ball][j_new_ball].GetColour();
+					nile.hello[i_new_ball][j_new_ball].ChangeKey(1);
+					int main_colour = nile.hello[i_new_ball][j_new_ball].GetColour();
 					int wine = 0;
 					while (wine != 36)
 					{
@@ -381,32 +381,32 @@ int main(int argc, char* argv[])
 					for (int i = 0; i < 9; ++i)
 						for (int j = 0; j < 10; ++j)
 						{
-							if (nile.aab[i][j].GetColour() == nile.aab[i_new_ball][j_new_ball].GetColour())
+							if (nile.hello[i][j].GetColour() == nile.hello[i_new_ball][j_new_ball].GetColour())
 							{
 								for (int gx = -20; gx <= 20; gx += 40)
 									for (int gy = -40; gy <= 40; gy += 80)
 									{
-										int catJ = (nile.aab[i][j].GetY() + gy) / 40 - 1;
-										int dogI = ((nile.aab[i][j].GetX() + gx) + 20 * (catJ % 2 - 1)) / 40 - 1;
+										int catJ = (nile.hello[i][j].GetY() + gy) / 40 - 1;
+										int dogI = ((nile.hello[i][j].GetX() + gx) + 20 * (catJ % 2 - 1)) / 40 - 1;
 										if ((catJ >= 0 && catJ < 10) && (dogI >= 0 && dogI < 9))
 										{
-											if (nile.aab[dogI][catJ].GetKey() == 1 && nile.aab[i][j].GetKey() != 1 && nile.aab[dogI][catJ].GetColour() != -1)
+											if (nile.hello[dogI][catJ].GetKey() == 1 && nile.hello[i][j].GetKey() != 1 && nile.hello[dogI][catJ].GetColour() != -1)
 											{
-												nile.aab[i][j].ChangeKey(1);
+												nile.hello[i][j].ChangeKey(1);
 												++count;
 											}
 										}
 									}
-								if (i + 1 < 9 && nile.aab[i][j].GetKey() != 1)
-									if (nile.aab[i + 1][j].GetKey() == 1 && nile.aab[i + 1][j].GetColour() != -1)
+								if (i + 1 < 9 && nile.hello[i][j].GetKey() != 1)
+									if (nile.hello[i + 1][j].GetKey() == 1 && nile.hello[i + 1][j].GetColour() != -1)
 									{
-										nile.aab[i][j].ChangeKey(1);
+										nile.hello[i][j].ChangeKey(1);
 										++count;
 									}
-								if (i - 1 >= 0 && nile.aab[i][j].GetKey() != 1 && nile.aab[i - 1][j].GetColour() != -1)
-									if (nile.aab[i - 1][j].GetKey() == 1)
+								if (i - 1 >= 0 && nile.hello[i][j].GetKey() != 1 && nile.hello[i - 1][j].GetColour() != -1)
+									if (nile.hello[i - 1][j].GetKey() == 1)
 									{
-										nile.aab[i][j].ChangeKey(1);
+										nile.hello[i][j].ChangeKey(1);
 										++count;
 									}
 							}
@@ -417,14 +417,14 @@ int main(int argc, char* argv[])
 						for (int i = 0; i < 9; ++i)
 							for (int j = 0; j < 10; ++j)
 							{
-								nile.aab[i][j].ChangeKey(0);
+								nile.hello[i][j].ChangeKey(0);
 							}
 					
 					for (int i = 0; i < 9; ++i)
 					{
 						for (int j = 0; j < 10; ++j)
-							if (nile.aab[i][j].GetKey() == 1)
-								nile.aab[i][j].ChangeColour(-1);
+							if (nile.hello[i][j].GetKey() == 1)
+								nile.hello[i][j].ChangeColour(-1);
 					}
 					///////deleting///////
 
