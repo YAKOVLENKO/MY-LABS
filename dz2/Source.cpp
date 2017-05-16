@@ -162,7 +162,7 @@ class LineOfCircles
 int main(int argc, char* argv[])
 {
 
-	SDL_Window *window = SDL_CreateWindow("SDL2_gfx test", 100, 100, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	SDL_Window *window = SDL_CreateWindow("YAKOVLENKO's game", 100, 100, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 
