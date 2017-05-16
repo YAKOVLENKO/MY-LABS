@@ -162,7 +162,7 @@ class LineOfCircles
 int main(int argc, char* argv[])
 {
 
-	SDL_Window *window = SDL_CreateWindow("YAKOVLENKO's game", 100, 100, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	SDL_Window *window = SDL_CreateWindow("Anya's game", 100, 100, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
 
 	LineOfCircles nile;
 
-	TMainCircle aa;
+	TCircle aa;
 
 	int pos = 1, x = 200, y = 500; // для стрелки
 	int real_x = 0, real_y = 100; // для стрелки и движения шара
