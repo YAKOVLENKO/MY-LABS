@@ -187,32 +187,14 @@ int main(int argc, char* argv[])
 
 	int arm = 1; // чтобы шарик не уходил вбок
 
-	///////////////mass///////////////
-	int** MassXY;
 
-	int k = 40;
-	int m = 40;
-	MassXY = new int*[36];
-	for (int i = 0; i < 36; ++i)
-	{
-		MassXY[i] = new int[2];
-		MassXY[i][0] = k;
-		MassXY[i][1] = m;
-		if (k == 360)
-		{
-			m += 40;
-			k = 0;
-		}
-		k += 40;
-	}
-	///////////////mass///////////////
 
 
 
 	while (!quit)
 	{
 		if (SDL_PollEvent(&e))
-			switch (e.type) { // Смотрим, что за событие
+			switch (e.type) { 
 			case SDL_QUIT:
 				exit(0);
 				break;
