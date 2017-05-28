@@ -3,10 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 class boolean_function
 {
-	
+
 public:
 	using value_type = bool;
 	using size_type = size_t;
@@ -30,7 +31,24 @@ public:
 	// вернется функция "0011001100110011"
 	static boolean_function var(size_t n, size_t dimension)
 	{
+		std::vector<bool> nned;
+		std::vector<bool> tmp;
+		for (int i = 0; i <= n; ++i)
+		{
+			tmp.push_back(0);
+		}
+		for (int i = 0; i <= n; ++i)
+		{
+			tmp.push_back(1);
+		}
+		while (nned.size() < pow(2, dimension))
+		{
+			nned.insert(nned.end(), tmp.begin(), tmp.end());
+		}
 
+		boolean_function dom(nned);
+
+		return dom;
 	}
 
 	// тождественный ноль "от dimension переменных"
@@ -38,7 +56,7 @@ public:
 	{
 		std::vector<value_type> newvec;
 		for (int i = 0; i < pow(2, dimension); ++i)
-			newvec[i] = 0;
+			newvec.push_back(0);
 		boolean_function bf(newvec);
 		return bf;
 	}
@@ -48,13 +66,14 @@ public:
 	{
 		std::vector<value_type> newvec;
 		for (int i = 0; i < pow(2, dimension); ++i)
-			newvec[i] = 0;
+			newvec.push_back(1);
 		boolean_function bf(newvec);
 		return bf;
 	}
 
 	static boolean_function from_anf(std::vector<value_type> v)
 	{
+		//todo
 		std::vector<value_type> newvec;
 		int wall = v.size() - 1;
 		while (wall >= 0)
@@ -68,6 +87,7 @@ public:
 			--wall;
 		}
 		std::reverse(newvec.begin(), newvec.end());
+		return newvec;
 	}
 
 	boolean_function() = default;
@@ -76,7 +96,7 @@ public:
 	boolean_function(size_t n)
 	{
 		for (int i = 0; i < pow(2, n); ++i)
-			mainbool[i] = 0;
+			mainbool.push_back(0);
 	}
 
 	// задает фунцию от n переменных. значение равно value
@@ -86,23 +106,38 @@ public:
 	// тогда АНФ boolean_function будет равна x + y + xy + zx + zy + zyx
 	boolean_function(unsigned long long value, size_type n)
 	{
-		for (int i = 0; i < n; ++i)
-		{
-			mainbool[i] = value / pow(2, n - i);
-			value = value - mainbool[i] * pow(2, n - i);
+		mainbool.clear();
+		for (int i = 0; i < pow(2, n); i++) {
+			mainbool.push_back(0);
 		}
+
+		int i = mainbool.size() - 1;
+
+		while (value)
+		{
+			mainbool[i] = value % 2;
+			i -= 1;
+			value /= 2;
+		}
+
+		std::reverse(mainbool.begin(), mainbool.end());
 	}
 
 	// пусть table = "01110000"
 	// тогда АНФ boolean_function будет равна x + y + xy + zx + zy + zyx
 	boolean_function(const std::string& table)
 	{
+		if (log2(table.size()) != (double)((int)log2(table.size())))
+			throw std::exception();
+
+		//todo
 		for (int i = 0; i < table.size(); i++)
 		{
-			if (table[i] == '0')
-				mainbool[i] = 0;
-			else
-				mainbool[i] = 1;
+			mainbool.clear();
+
+			if (table[i] != '0' || table[i] != '1') throw std::exception();
+
+			mainbool.push_back(table[i] == '1');
 		}
 	}
 
@@ -110,10 +145,15 @@ public:
 	// тогда АНФ boolean_function будет равна x + y + 1
 	boolean_function(const std::vector<value_type>& table)
 	{
+		if (log2(table.size()) != (double)((int)log2(table.size())))
+			throw std::exception();
 		mainbool = table;
 	}
 	boolean_function(const std::initializer_list<bool> vars)
 	{
+		if (log2(vars.size()) != (double)((int)log2(vars.size())))
+			throw std::exception();
+
 		for (auto &ind : vars)
 		{
 			mainbool.push_back(ind);
@@ -136,7 +176,7 @@ public:
 	boolean_function& operator += (const boolean_function& rhs)
 	{
 		if (mainbool.size() != rhs.mainbool.size())
-			throw std::exception("Different sizes!");
+			throw std::exception();
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
 			mainbool[i] = (mainbool[i] + rhs.mainbool[i]) % 2;
@@ -149,7 +189,7 @@ public:
 	boolean_function& operator *= (const boolean_function& rhs)
 	{
 		if (mainbool.size() != rhs.mainbool.size())
-			throw std::exception("Different sizes!");
+			throw std::exception();
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
 			mainbool[i] = mainbool[i] * rhs.mainbool[i];
@@ -162,12 +202,10 @@ public:
 	boolean_function& operator |= (const boolean_function& rhs)
 	{
 		if (mainbool.size() != rhs.mainbool.size())
-			throw std::exception("Different sizes!");
+			throw std::exception();
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
-			if (mainbool[i] == 0 && rhs.mainbool[i] == 0)
-				mainbool[i] = 0;
-			else mainbool[i] = 1;
+			mainbool[i] = mainbool[i] && rhs.mainbool[i];
 		}
 		return *this;
 	}
@@ -179,15 +217,14 @@ public:
 		{
 			mainbool[i] = !mainbool[i];
 		}
+		return *this;
 	}
 
 	// true если функции равны
 	//  иначе false
 	bool operator == (const boolean_function& rhs) const
 	{
-			if (mainbool == rhs.mainbool)
-				return true;
-			return false;
+		return mainbool == rhs.mainbool;
 	}
 
 	// true если одна функция сравнима и больше или равна rhs
@@ -196,17 +233,20 @@ public:
 	bool operator >= (const boolean_function& rhs) const
 	{
 		if (mainbool.size() != rhs.mainbool.size())
-			throw std::exception("Different sizes!");
+			throw std::exception();
 		int pass = 0;
+		bool larger = 0;
+		bool lower = 0;
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
-			if (mainbool[i] >= rhs.mainbool[i])
-				++pass;
-			else --pass;
+			if (mainbool[i] > rhs.mainbool[i])
+				larger = 1;
+			else if (mainbool[i] < rhs.mainbool[i])
+				lower = 1;
 		}
-		if (pass == mainbool.size())
+		if ((larger && !lower) && (!larger && !lower))
 			return true;
-		if (pass * (-1) == mainbool.size())
+		if (!larger && lower)
 			return false;
 		throw std::logic_error("Functions are incomparable");
 	}
@@ -222,15 +262,11 @@ public:
 
 	reference at(size_type ind)
 	{
-		if (ind >= mainbool.size() || ind < 0)
-			throw std::exception("Wrong index!");
-		return mainbool[ind];
+		return mainbool.at(ind);
 	}
 	const_reference at(size_type ind) const
 	{
-		if (ind >= mainbool.size() || ind < 0)
-			throw std::exception("Wrong index!");
-		return mainbool[ind];
+		return mainbool.at(ind);
 	}
 
 	iterator begin()
@@ -259,33 +295,111 @@ public:
 	// количество переменных
 	size_type dimension() const throw()
 	{
-		size_t p = 0;
-		size_t ves = mainbool.size();
-		while (ves > 1)
-		{
-			ves /= 2;
-			++p;
-		}
-		return p;
+
+		if (mainbool.size() == 0) return 0;
+
+		double ans = log2(mainbool.size());
+
+		return (size_type)ans;
 	}
 
 	// возвращает значение функции
 	// пусть boolean_function задает функцию f(x, y, z)
 	// тогда функция вернет f(vars[0], vars[1], vars[2])
-	bool operator()(const std::vector<bool>& vars) const;
-	bool operator()(const std::initializer_list<bool> vars) const;
+	bool operator()(const std::vector<bool>& vars) const
+	{
+
+		int index = 0;
+		long long int two = 1;
+		for (int i = vars.size() - 1; i >= 0; ++i) {
+
+			index += vars[i] * two;
+			two *= 2;
+		}
+		return mainbool[index];
+	}
+
+	bool operator()(const std::initializer_list<bool> vars) const
+	{
+		std::vector<bool> tmp = vars;
+
+		return operator()(tmp);
+	}
 
 
 	// T(x1, x2, ..., xN) - текущая функция
 	// operator вернет новую функцию, которая равна композиции G = T(fs[0], fs[1], ..., fs[N-1])
-	boolean_function operator()(const std::vector<boolean_function>& fs) const;
-	boolean_function operator()(const std::initializer_list<boolean_function> vars) const;
+	boolean_function operator()(std::vector<boolean_function>& fs) const {
+		//todo
+		std::vector<bool> tmp = mainbool;
+		std::vector<bool>new_mainbool;
+		if (fs.size() != mainbool.size())
+			throw std::exception();
+		for (int i = 0; i < fs.size(); ++i)
+		{
+			new_mainbool[i] = tmp[fs[i].number()];
+		}
+		boolean_function new_bool(new_mainbool);
+		return new_bool;
+	}
+	boolean_function operator()(const std::initializer_list<boolean_function> vars) const {
 
-	bool is_monotone() const;
+		//todo
+		std::vector<boolean_function> fs = vars;
+		std::vector<bool> tmp = mainbool;
+		std::vector<bool>new_mainbool;
+		if (fs.size() != mainbool.size())
+			throw std::exception();
+		for (int i = 0; i < fs.size(); ++i)
+		{
+			new_mainbool[i] = tmp[fs[i].number()];
+		}
+		boolean_function new_bool(new_mainbool);
+		return new_bool;
+	}
+
+	int number()
+	{
+		int index = 1;
+		int result = 0;
+		for (int i = mainbool.size() - 1; i >= 0; --i)
+		{
+			result += index * mainbool[i];
+			index *= 2;
+		}
+		return result;
+	}
+
+	bool is_monotone() const
+	{
+
+		for (int i = 0; i < mainbool.size(); ++i)
+		{
+			if (mainbool[i] == 0)
+			{
+				for (int j = 0; j < i; ++j)
+				{
+					if (mainbool[j] == 1)
+					{
+						boolean_function tmp1(i, dimension());
+						boolean_function tmp2(j, dimension());
+						try {
+							if (tmp1 >= tmp2) return 0;
+						}
+						catch (...) {
+
+						}
+					}
+				}
+			}
+		}
+		return 1;
+
+	}
 	bool is_symmetric() const
 	{
 		std::vector<bool> first = mainbool;
-		std::reverse(mainbool.begin(), mainbool.end());
+		std::reverse(first.begin(), first.end());
 		for (int i = i; i < mainbool.size(); ++i)
 		{
 			if (mainbool[i] != (!(first[i])))
@@ -295,19 +409,22 @@ public:
 	}
 	bool is_linear() const
 	{
+
+		//todo
 		int znach = mainbool.size();
 		std::vector<bool> maxANF;
 		for (int i = mainbool.size() - 1; i >= 0; --i)
 		{
-			if (i == znach / 2 - 1)
+			if (i == znach / 2)
 			{
 				maxANF[i] = 1;
 				znach / 2;
 			}
 			else
 				maxANF[i] = 0;
+			maxANF[0] = 1;
 		}
-		std::vector<value_type> ANF = anf();
+		std::vector<value_type> ANF = this->anf();
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
 			if (ANF[i] > maxANF[i])
@@ -328,41 +445,43 @@ public:
 		int znach = 0;
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
-			if (mainbool[i] == 1)
+			if (mainbool[i])
 				++znach;
 			else --znach;
 		}
-		if (znach != 0)
-			return false;
-		return true;
+		return znach == 0;
 	}
 	size_t weight() const
 	{
 		size_t weight = 0;
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
-			if (mainbool[i] == 1)
-				++weight;
+			weight += mainbool[i];
 		}
 		return weight;
 	}
 
 	bool is_functionally_complete_system() const
 	{
-		if (is_T1() && is_T0() && is_symmetric() && is_monotone() && is_linear())
-			return false;
-		return true;
+		if (!is_T1() && !is_T0() && !is_symmetric() && !is_monotone() && !is_linear())
+			return true;
+		return false;
 	}
 	// Возвращает АНФ функции
 	std::vector<value_type> anf() const
 	{
+		//todo
 		std::vector<value_type> anf;
+		for (int i = 0; i < mainbool.size(); ++i)
+		{
+			anf.push_back(0);
+		}
 		std::vector<value_type> zag = mainbool;
 		int wall = mainbool.size() - 1;
 		while (wall >= 0)
 		{
 			anf[wall] = zag[0];
-			for (int i = 0; i < mainbool.size() - 1; ++i)
+			for (int i = 0; i <= zag.size() - 2; ++i)
 			{
 				zag[i] = (zag[i] + zag[i + 1]) % 2;
 			}
@@ -372,37 +491,68 @@ public:
 		std::reverse(anf.begin(), anf.end());
 		return anf;
 	}
-	
+	std::vector<bool> GetMainbool()
+	{
+		return  mainbool;
+	}
+
 };
 
 // пусть boolean_function представляет из себя функцию "01110000"
 // тогда get_polynom вернет строку "x0 + x1 + x0x1 + x0x2 + x1x2 + x0x1x2"
-std::string get_polynom(const boolean_function&)
+std::string get_polynom(boolean_function& smth)
 {
-
+	//todo
+	std::string result = 0;
+	std::vector<bool> anf;
+	for (int i = 0; i < smth.GetMainbool().size(); ++i)
+	{
+		anf.push_back(0);
+	}
+	std::vector<bool> zag = smth.GetMainbool();
+	int wall = smth.GetMainbool().size() - 1;
+	while (wall >= 0)
+	{
+		anf[wall] = zag[0];
+		for (int i = 0; i <= zag.size() - 2; ++i)
+		{
+			zag[i] = (zag[i] + zag[i + 1]) % 2;
+		}
+		zag.pop_back();
+		--wall;
+	}
+	std::reverse(anf.begin(), anf.end());
+	for (int i = 0; i < anf.size(); ++i)
+	{
+		result.push_back(anf[i]);
+	}
+	return result;
 }
 
 boolean_function operator + (const boolean_function& a, const boolean_function& b)
 {
 	boolean_function newfunc = a;
-	return newfunc += b;
+	newfunc += b;
+	return newfunc;
 }
 
 boolean_function operator * (const boolean_function& a, const boolean_function& b)
 {
 	boolean_function newfunc = a;
-	return newfunc *= b;
+	newfunc *= b;
+	return newfunc;
 }
 
 boolean_function operator | (const boolean_function& a, const boolean_function& b)
 {
 	boolean_function newfunc = a;
-	return newfunc |= b;
+	newfunc |= b;
+	return newfunc;
 }
 
 bool operator != (const boolean_function& a, const boolean_function& b)
 {
-	return a != b;
+	return !(a == b);
 }
 
 
