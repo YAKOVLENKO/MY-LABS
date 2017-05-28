@@ -21,7 +21,7 @@
 }
 
 
-#include "boolean_function.h"
+#include "Source.cpp"
 
 void test_ctor0()
 {
