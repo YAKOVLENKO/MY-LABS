@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <string>
-#include "Source.cpp"
+#include "Source.h"
 
 void writeToFile(const std::string & filename)
 {
