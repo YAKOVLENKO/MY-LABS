@@ -1,16 +1,4 @@
-/*#include<iostream>
 
-template<class It, class Cmp>
-void qsort(It beg, It end, Cmp cmp)
-{
-	int i = beg;
-	int j = end;
-	Cmp center = cmp[beg >> 1];
-	while (i != j)
-	{
-
-	}
-}*/
 
 #include <string>
 #include <iostream>
