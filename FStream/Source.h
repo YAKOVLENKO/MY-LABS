@@ -73,7 +73,8 @@ public:
         opened= 0;
     }
 
-    std::string getline1(){
+    std::string getline1()
+    {
         if (!opened) return "";
         char * line = NULL;
         size_t len = 0;
@@ -96,19 +97,22 @@ public:
         return tmp;
     }
 
-    std::string write(std::string s){
+    std::string write(std::string s)
+    {
 
         if (opened) fprintf(file, s.c_str());
     }
 
-    void seek(int pos){
+    void seek(int pos)
+    {
 
         if (opened) fseek (file , pos , SEEK_SET );
 
     }
 
 
-    int eof(){
+    int eof()
+    {
 
         return feof(file);
 
