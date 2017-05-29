@@ -36,7 +36,7 @@ void my_qsort(It bgn, It end, Cmp cmp)
 {
 	It tmp;
 	It left = bgn;
-	It right = end;
+	It right = --end;
 	It middle = getMiddle(bgn, end);
 
 	bool le = 0;
@@ -71,7 +71,7 @@ void my_qsort(It bgn, It end, Cmp cmp)
 		std::iter_swap(right, left);
 		middle = getMiddle(bgn, end);
 		if (ri == 1) {
-			right = end;
+			right = --end;
 			ri = 0;
 		}
 		if (le == 1) {
@@ -89,5 +89,8 @@ int main() {
 	std::vector<int> mint = { 1, 5, 7, 3, 6, 4 };
 
 	my_qsort(mint.begin(), mint.end(), &compare);
-
+	for (int i = 0; i < mint.size(); ++i)
+	{
+		std::cout << mint[i] << std::endl;
+	}
 }
