@@ -17,7 +17,8 @@ public:
     TFsream(std::string str, std::string type)
     {
         file = fopen(str.c_str(), type.c_str());
-        if (file != NULL) opened = 1;
+        if (file != NULL) 
+            opened = 1;
     };
 
     void open(std::string str, std::string type)
@@ -25,7 +26,8 @@ public:
 
         if (opened) close();
         file = fopen(str.c_str(), type.c_str());
-        if (file != NULL) opened = 1;
+        if (file != NULL) 
+            opened = 1;
 
     }
 
@@ -38,7 +40,7 @@ public:
     ~TFsream()
     {
         if (!opened) fclose(file);
-        opened= 0;
+            opened= 0;
     };
 
     TFsream& operator<<(std::string str)
@@ -70,7 +72,7 @@ public:
     void close()
     {
         if(opened) fclose(file);
-        opened= 0;
+            opened= 0;
     }
 
     std::string getline1()
@@ -86,7 +88,8 @@ public:
 
     std::string read()
     {
-        if (!opened) return "";
+        if (!opened) 
+            return "";
         fseek(file, 0, SEEK_END);
         int size = ftell(file);
         fseek(file, 0, SEEK_SET);
@@ -100,13 +103,15 @@ public:
     std::string write(std::string s)
     {
 
-        if (opened) fprintf(file, s.c_str());
+        if (opened) 
+            fprintf(file, s.c_str());
     }
 
     void seek(int pos)
     {
 
-        if (opened) fseek (file , pos , SEEK_SET );
+        if (opened) 
+            fseek (file , pos , SEEK_SET );
 
     }
 
