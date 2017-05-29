@@ -410,12 +410,11 @@ void test_it()
 
 void test_it_begin_end()
 {
-boolean_function f(5);
-
-for (auto & v : f)
-{
-assert(static_cast<bool>(v) == false);
-}
+	boolean_function f(5);
+	for (auto v : f)
+	{
+		assert(static_cast<bool>(v) == false);
+	}
 }
 
 void test_access()
@@ -590,8 +589,8 @@ int main()
 	RUN_TEST(test_ctor1, "successed");
 	RUN_TEST(test_ctor2, "successed");
 	RUN_TEST(test_ctor3, "successed");
-	//RUN_TEST(test_from_anf, "successed");
-	//RUN_TEST(test_ctor_string, "successed");
+	RUN_TEST(test_from_anf, "successed");
+	RUN_TEST(test_ctor_string, "successed");
 	RUN_TEST(test_ctor_vec, "successed");
 	RUN_TEST(test_ctor_copy, "successed");
 
