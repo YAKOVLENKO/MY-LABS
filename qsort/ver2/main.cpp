@@ -83,7 +83,7 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 
 int main() {
-	std::vector<int> mint = { 1, 5, 2, 7, 4, 2, 6, 3, 2, 34, 65, 34, 65, 2, 6, 10, 33 };
+	std::vector<int> mint = { 29358, 26962, 26500, 24464, 19169, 18467, 15724, 11478, 6334, 41 };
 
 	my_qsort(mint.begin(), mint.end(), &compare);
 
