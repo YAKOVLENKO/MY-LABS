@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 template<class It>
 int massSize(It bgn, It end)
@@ -28,12 +29,15 @@ It getMiddle(It bgn, It end)
 
 bool compare(int first, int second)
 {
-	return first >= second;
+	return first > second;
 }
 
 template<class It, class Cmp>
 void my_qsort(It bgn, It end, Cmp cmp)
 {
+	if (massSize(bgn, end) < 3)
+		return;
+
 	It tmp;
 	It left = bgn;
 	It right = end;
@@ -42,23 +46,14 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 	bool le = 0;
 	bool ri = 0;
-	if (massSize(bgn, end) < 3)
-	{
-		if (cmp(*left, *right))
-		{
-			std::iter_swap(left, right);
-		}
-		return;
-	}
-
 
 	while (left != right) {
-		while (cmp(*middle, *left)) {
+		while (middle != left) {
 			if (cmp(*left, *middle))
 				break;
 			++left;
 		}
-		while (cmp(*right, *middle)) {
+		while (right != middle) {
 			if (cmp(*middle, *right))
 				break;
 			--right;
@@ -72,7 +67,8 @@ void my_qsort(It bgn, It end, Cmp cmp)
 		std::iter_swap(right, left);
 		middle = getMiddle(bgn, end);
 		if (ri == 1) {
-			right = --end;
+			right = end;
+			--right;
 			ri = 0;
 		}
 		if (le == 1) {
@@ -87,11 +83,13 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 
 int main() {
-	std::vector<int> mint = { 1, 5, 7, 3, 6, 4, 8, 10, 2, 1 };
+	std::vector<int> mint = { 1, 5, 2, 7, 4, 2, 6, 3, 2, 34, 65, 34, 65, 2, 6, 10, 33 };
 
 	my_qsort(mint.begin(), mint.end(), &compare);
+
 	for (int i = 0; i < mint.size(); ++i)
 	{
 		std::cout << mint[i] << std::endl;
 	}
+	std::cout << std::is_sorted(mint.begin(), mint.end());
 }
