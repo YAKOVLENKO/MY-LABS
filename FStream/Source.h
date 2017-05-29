@@ -23,17 +23,14 @@ public:
 
     void open(std::string str, std::string type)
     {
-
         if (opened) close();
         file = fopen(str.c_str(), type.c_str());
         if (file != NULL) 
             opened = 1;
-
     }
 
     bool is_open()
     {
-
         return opened;
     }
 
@@ -102,25 +99,20 @@ public:
 
     std::string write(std::string s)
     {
-
         if (opened) 
             fprintf(file, s.c_str());
     }
 
     void seek(int pos)
     {
-
         if (opened) 
             fseek (file , pos , SEEK_SET );
-
     }
 
 
     int eof()
     {
-
         return feof(file);
-
     }
 
 };
