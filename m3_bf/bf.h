@@ -33,11 +33,11 @@ public:
 	{
 		std::vector<bool> nned;
 		std::vector<bool> tmp;
-		for (int i = 0; i <= n; ++i)
+		for (int i = 0; i < pow(2, n); ++i)
 		{
 			tmp.push_back(0);
 		}
-		for (int i = 0; i <= n; ++i)
+		for (int i = 0; i < pow(2, n); ++i)
 		{
 			tmp.push_back(1);
 		}
@@ -73,9 +73,12 @@ public:
 
 	static boolean_function from_anf(std::vector<value_type> v)
 	{
-		//todo
 		std::vector<value_type> newvec;
 		int wall = v.size() - 1;
+
+		for (int i = 0; i <= wall; ++i)
+			newvec.push_back(0);
+
 		while (wall >= 0)
 		{
 			newvec[wall] = v[0];
@@ -107,7 +110,7 @@ public:
 	boolean_function(unsigned long long value, size_type n)
 	{
 		mainbool.clear();
-		for (int i = 0; i < pow(2, n); i++) {
+		for (int i = 0; i < pow(2, n); ++i) {
 			mainbool.push_back(0);
 		}
 
@@ -116,7 +119,7 @@ public:
 		while (value)
 		{
 			mainbool[i] = value % 2;
-			i -= 1;
+			--i;
 			value /= 2;
 		}
 
@@ -130,12 +133,11 @@ public:
 		if (log2(table.size()) != (double)((int)log2(table.size())))
 			throw std::exception();
 
-		//todo
-		for (int i = 0; i < table.size(); i++)
+		mainbool.clear();
+		for (int i = 0; i < table.size(); ++i)
 		{
-			mainbool.clear();
 
-			if (table[i] != '0' || table[i] != '1') throw std::exception();
+			if (table[i] != '0' && table[i] != '1') throw std::exception();
 
 			mainbool.push_back(table[i] == '1');
 		}
@@ -205,7 +207,7 @@ public:
 			throw std::exception();
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
-			mainbool[i] = mainbool[i] && rhs.mainbool[i];
+			mainbool[i] = mainbool[i] || rhs.mainbool[i];
 		}
 		return *this;
 	}
@@ -224,7 +226,25 @@ public:
 	//  иначе false
 	bool operator == (const boolean_function& rhs) const
 	{
-		return mainbool == rhs.mainbool;
+		std::vector<bool>test1 = anf();
+		std::vector<bool>test2 = rhs.anf();
+		std::vector<bool>tmp;
+
+		if (test1.size() < test2.size())
+			test1.swap(test2);
+
+		for (int i = 0; i < test2.size(); ++i) 
+		{
+
+			if (test1[i] != test2[i]) return false;
+		}
+
+		for (int i = test2.size(); i < test1.size(); ++i) 
+		{
+			if (test1[i] == 1) return false;
+		}
+
+		return true;
 	}
 
 	// true если одна функция сравнима и больше или равна rhs
@@ -244,7 +264,7 @@ public:
 			else if (mainbool[i] < rhs.mainbool[i])
 				lower = 1;
 		}
-		if ((larger && !lower) && (!larger && !lower))
+		if ((larger && !lower) || (!larger && !lower))
 			return true;
 		if (!larger && lower)
 			return false;
@@ -311,7 +331,8 @@ public:
 
 		int index = 0;
 		long long int two = 1;
-		for (int i = vars.size() - 1; i >= 0; ++i) {
+		for (int i = vars.size() - 1; i >= 0; --i)
+		{
 
 			index += vars[i] * two;
 			two *= 2;
@@ -329,8 +350,8 @@ public:
 
 	// T(x1, x2, ..., xN) - текущая функция
 	// operator вернет новую функцию, которая равна композиции G = T(fs[0], fs[1], ..., fs[N-1])
-	boolean_function operator()(std::vector<boolean_function>& fs) const {
-		//todo
+	boolean_function operator()(std::vector<boolean_function>& fs) const 
+	{
 		std::vector<bool> tmp = mainbool;
 		std::vector<bool>new_mainbool;
 		if (fs.size() != mainbool.size())
@@ -342,17 +363,67 @@ public:
 		boolean_function new_bool(new_mainbool);
 		return new_bool;
 	}
-	boolean_function operator()(const std::initializer_list<boolean_function> vars) const {
-
-		//todo
+	boolean_function operator()(const std::initializer_list<boolean_function> vars) const 
+	{
 		std::vector<boolean_function> fs = vars;
 		std::vector<bool> tmp = mainbool;
 		std::vector<bool>new_mainbool;
-		if (fs.size() != mainbool.size())
+		if (fs.size() != dimension())
 			throw std::exception();
-		for (int i = 0; i < fs.size(); ++i)
+
+		int max_len = 0;
+
+		for (int i = 0; i < fs.size(); ++i) 
 		{
-			new_mainbool[i] = tmp[fs[i].number()];
+
+			if (fs[i].size() > max_len) max_len = fs[i].size();
+
+		}
+
+		std::vector <bool> tmp2;
+
+		for (int i = 0; i < fs.size(); ++i) 
+		{
+
+			if (fs[i].size() < max_len) 
+			{
+
+				tmp2.clear();
+
+				while (tmp2.size() < max_len) 
+				{
+
+					tmp2.insert(tmp2.end(), fs[i].begin(), fs[i].end());
+
+				}
+				fs[i] = tmp2;
+			}
+		}
+
+		std::vector <bool> tmp1;
+
+		for (int i = 0; i < fs[0].size(); ++i)
+		{
+			tmp1.clear();
+			for (int j = 0; j < fs.size(); ++j) 
+			{
+
+				tmp1.push_back(fs[j][i]);
+
+			}
+
+			long long int d = 1;
+
+			long long int dem = 0;
+
+			for (int j = tmp1.size() - 1; j >= 0; --j) 
+			{
+
+				dem += tmp1[j] * d;
+				d *= 2;
+			}
+
+			new_mainbool.push_back(tmp[dem]);
 		}
 		boolean_function new_bool(new_mainbool);
 		return new_bool;
@@ -400,7 +471,7 @@ public:
 	{
 		std::vector<bool> first = mainbool;
 		std::reverse(first.begin(), first.end());
-		for (int i = i; i < mainbool.size(); ++i)
+		for (int i = 0; i < mainbool.size(); ++i)
 		{
 			if (mainbool[i] != (!(first[i])))
 				return false;
@@ -409,23 +480,23 @@ public:
 	}
 	bool is_linear() const
 	{
-
-		//todo
 		int znach = mainbool.size();
 		std::vector<bool> maxANF;
+
+		for (int i = 0; i < mainbool.size(); i++)
+			maxANF.push_back(0);
+
 		for (int i = mainbool.size() - 1; i >= 0; --i)
 		{
 			if (i == znach / 2)
 			{
 				maxANF[i] = 1;
-				znach / 2;
+				znach /= 2;
 			}
-			else
-				maxANF[i] = 0;
 			maxANF[0] = 1;
 		}
 		std::vector<value_type> ANF = this->anf();
-		for (int i = 0; i < mainbool.size(); ++i)
+		for (int i = 0; i < ANF.size(); ++i)
 		{
 			if (ANF[i] > maxANF[i])
 				return false;
@@ -470,7 +541,6 @@ public:
 	// Возвращает АНФ функции
 	std::vector<value_type> anf() const
 	{
-		//todo
 		std::vector<value_type> anf;
 		for (int i = 0; i < mainbool.size(); ++i)
 		{
@@ -481,9 +551,12 @@ public:
 		while (wall >= 0)
 		{
 			anf[wall] = zag[0];
-			for (int i = 0; i <= zag.size() - 2; ++i)
-			{
-				zag[i] = (zag[i] + zag[i + 1]) % 2;
+			int test = zag.size() - 2;
+			if (test >= 0) {
+				for (int i = 0; i <= zag.size() - 2; ++i) 
+				{
+					zag[i] = (zag[i] + zag[i + 1]) % 2;
+				}
 			}
 			zag.pop_back();
 			--wall;
@@ -502,7 +575,6 @@ public:
 // тогда get_polynom вернет строку "x0 + x1 + x0x1 + x0x2 + x1x2 + x0x1x2"
 std::string get_polynom(boolean_function& smth)
 {
-	//todo
 	std::string result = 0;
 	std::vector<bool> anf;
 	for (int i = 0; i < smth.GetMainbool().size(); ++i)
@@ -552,6 +624,7 @@ boolean_function operator | (const boolean_function& a, const boolean_function& 
 
 bool operator != (const boolean_function& a, const boolean_function& b)
 {
+
 	return !(a == b);
 }
 
