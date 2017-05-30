@@ -26,10 +26,10 @@ It getMiddle(It bgn, It end)
 	}
 	return middle;
 }
-
-bool compare(int first, int second)
+template<typename smth>
+bool compare(smth first, smth second)
 {
-	return first > second;
+	return first < second;
 }
 
 template<class It, class Cmp>
@@ -90,9 +90,9 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 
 int main() {
-	std::vector<int> mint = { 32, 432, 54, 23, 65, 2345, 245 };
+	std::vector<double> mint = { 32.1, 32.5, 32.6, 32.01 };
 
-	my_qsort(mint.begin(), mint.end(), &compare);
+	my_qsort(mint.begin(), mint.end(), &compare<double>);
 
 	for (int i = 0; i < mint.size(); ++i)
 	{
