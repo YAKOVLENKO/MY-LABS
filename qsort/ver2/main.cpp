@@ -35,14 +35,21 @@ bool compare(int first, int second)
 template<class It, class Cmp>
 void my_qsort(It bgn, It end, Cmp cmp)
 {
-	if (massSize(bgn, end) < 3)
-		return;
-
 	It tmp;
 	It left = bgn;
 	It right = end;
 	--right;
 	It middle = getMiddle(bgn, end);
+	
+	if (massSize(bgn, end) < 3)
+	{
+		if (cmp(*left, *right))
+			std::iter_swap(left, right);
+
+		return;
+	}
+
+	
 
 	bool le = 0;
 	bool ri = 0;
@@ -83,7 +90,7 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 
 int main() {
-	std::vector<int> mint = { 29358, 26962, 26500, 24464, 19169, 18467, 15724, 11478, 6334, 41 };
+	std::vector<int> mint = { 32, 432, 54, 23, 65, 2345, 245 };
 
 	my_qsort(mint.begin(), mint.end(), &compare);
 
