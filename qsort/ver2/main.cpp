@@ -40,28 +40,28 @@ void my_qsort(It bgn, It end, Cmp cmp)
 	It right = end;
 	--right;
 	It middle = getMiddle(bgn, end);
-	
+
 	if (massSize(bgn, end) < 3)
 	{
-		if (cmp(*left, *right))
+		if (cmp(*right, *left))
 			std::iter_swap(left, right);
 
 		return;
 	}
 
-	
+
 
 	bool le = 0;
 	bool ri = 0;
 
 	while (left != right) {
 		while (middle != left) {
-			if (cmp(*left, *middle))
+			if (!(cmp(*left, *middle)) && (*middle != *left))
 				break;
 			++left;
 		}
 		while (right != middle) {
-			if (cmp(*middle, *right))
+			if (!(cmp(*middle, *right)) && (*middle != *right))
 				break;
 			--right;
 		}
@@ -90,13 +90,14 @@ void my_qsort(It bgn, It end, Cmp cmp)
 
 
 int main() {
-	std::vector<double> mint = { 32.1, 32.5, 32.6, 32.01 };
-
-	my_qsort(mint.begin(), mint.end(), &compare<double>);
+	//const size_t N = 10;
+	std::vector<int> mint = {1, 2, 6, 6, 3, 2, 2, 7};
+	//std::generate(mint.begin(), mint.end(), rand);
+	my_qsort(mint.begin(), mint.end(), &compare<int>);
 
 	for (int i = 0; i < mint.size(); ++i)
 	{
 		std::cout << mint[i] << std::endl;
 	}
-	std::cout << std::is_sorted(mint.begin(), mint.end());
+	std::cout << std::is_sorted(mint.begin(), mint.end(), &compare<int>);
 }
