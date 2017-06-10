@@ -11,7 +11,7 @@ public:
 
 	TFsream() = default;
 
-	TFsream(std::string str, std::string type)
+	TFsream(const std::string& str, const std::string& type)
 	{
 		file = fopen(str.c_str(), type.c_str());
 		if (file != NULL)
@@ -37,7 +37,7 @@ public:
 		opened = 0;
 	};
 
-	TFsream& operator<<(std::string str)
+	TFsream& operator<<(const std::string& str)
 	{
 		if (!opened)
 			throw std::exception();
@@ -107,7 +107,7 @@ public:
 		return tmp;
 	}
 
-	std::string write(std::string s)
+	std::string write(const std::string& s)
 	{
 		if (opened)
 			fprintf(file, s.c_str());
