@@ -9,7 +9,7 @@ void writeToFile(const std::string & filename)
 	// fstream - это класс для работы с файлами
 	// первый аргумент конструктора, так же как и первый аргумент fopen, принимает путь до файла.
 	// второй артумент - режим работы. std::fstream::out - это аналог "w" для fopen
-	TFsream fl(filename, TFsream::out);
+	TFsream fl(filename, "w");
 	std::string str = "London is the capital of GB";
 
 
@@ -27,7 +27,7 @@ void writeToFile(const std::string & filename)
 std::string readFirstStringFromFile(const std::string & filename)
 {
 	// второй артумент - режим работы. std::fstream::in - это аналог "r" для fopen
-	std::fstream fl(filename, std::fstream::in);
+	std::fstream fl(filename, "r");
 	std::string str;
 
 	// считываем символы до первого пробела из файла
@@ -39,16 +39,13 @@ std::string readFirstStringFromFile(const std::string & filename)
 
 std::string readFirstLineFromFile(const std::string & filename)
 {
-	std::fstream fl(filename, std::fstream::in);
+	std::fstream fl(filename, "r");
 	std::string line;
 
 	// считываем всю строку из файла
 	std::getline(fl, line);
 	return line;
 }
-
-std::string TFsream::out = "w";
-std::string TFsream::in = "r";
 
 int main() {
 
