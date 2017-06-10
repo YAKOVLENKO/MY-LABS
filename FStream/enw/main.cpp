@@ -1,7 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-
 #include <iostream>
-
 #include <fstream>
 #include <string>
 #include "Addings.h"
@@ -29,7 +27,7 @@ void writeToFile(const std::string & filename)
 std::string readFirstStringFromFile(const std::string & filename)
 {
 	// второй артумент - режим работы. std::fstream::in - это аналог "r" для fopen
-	std::fstream fl(filename, 'r');
+	TFsream fl(filename, "r");
 	std::string str;
 
 	// считываем символы до первого пробела из файла
@@ -41,20 +39,20 @@ std::string readFirstStringFromFile(const std::string & filename)
 
 std::string readFirstLineFromFile(const std::string & filename)
 {
-	std::fstream fl(filename, 'r');
+	TFsream fl(filename, "r");
 	std::string line;
 
 	// считываем всю строку из файла
-	std::getline(fl, line);
+	line = fl.getline1();
 	return line;
 }
 
 int main() {
 
-	writeToFile("cap.txt");
+	writeToFile("one.txt");
 
-	std::cout << readFirstStringFromFile("cap.txt") << std::endl;
+	std::cout << readFirstStringFromFile("one.txt") << std::endl;
 
-	std::cout << readFirstLineFromFile("cap.txt");
+	std::cout << readFirstLineFromFile("one.txt");
 
 }
