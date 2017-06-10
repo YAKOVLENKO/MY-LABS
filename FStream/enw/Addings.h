@@ -90,6 +90,7 @@ public:
 		ssize_t read;
 		read = getline(&line, &len, file);
 		std::string tmp(line);
+		delete[] line;
 		return tmp;
 	}
 
